@@ -1,0 +1,5 @@
+- Use kivy 1.8.0
+- Use Grid Layout for crate map
+- In each screen (menu,setting,play) should use screen manager and screen for easy to manage
+- Try to use add_widget and remove_widget method for create some objects in python script
+- Try to create many files for each object
