@@ -9,12 +9,23 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.lang import Builder
 from kivy.core.window import Window
+from kivy.config import Config
+from random import randint
 from math import *
 from sys import exit
 
 Builder.load_string("""
+<GameBall>:
+    size: 30,30
+    canvas: 
+        Color:
+            rgba: 1,0,0,1
+        Ellipse:
+            pos: self.pos
+            size: 30,30
+
 <GameMap>:
-    size: 50,50
+    size: 500,500
     center_x: self.parent.center_x
     center_y: self.parent.center_y
     rows: 4
@@ -22,14 +33,18 @@ Builder.load_string("""
     spacing: 0
 
 <GameScreen>:
+    gameball: bb
     gamemap: gg
-    
+
     GameMap:
         id: gg
-        size: 100,100
         center_x: self.parent.center_x
         center_y: self.parent.center_y
         size_hint: None,None
+    
+    GameBall:
+        id: bb
+        center: self.center
 """)
 class LokiColorG(Widget):
     pass
@@ -43,23 +58,35 @@ class GameMap(GridLayout):
         for x in self.children:
             print x.pos,x.parent.pos,x.text,x.center_x,x.center_y
         print self.pos,self.center_x,self.center_y
+    
+class GameBall(Widget):
+    def __init__(self,**kwargs):
+        super(GameBall,self).__init__(**kwargs)
 
 class GameScreen(Screen):
+    gameball = ObjectProperty(None)
+    gamemap = ObjectProperty(None)
+
     def pt(self,x):
-        print self.center_x,self.center_y
-        print self.x,self.y
-        print Window.size
-        print self.children[0].pos
+        print "xx" 
+        print self.children
+        for x in self.children[1].children:
+            print x.center
+        print self.children[0].center, "zzzz"
+        print self.children[0].size,self.children[0]
+        print self.center,self
+        self.gameball.center = self.children[1].children[randint(0,15)].center
+        #self.children[0].center = self.children[1].children[randint(0,15)].center
+        #self.children[0].center = tup
 
     def __init__(self,**kwargs):
         super(GameScreen,self).__init__(**kwargs)
-        Clock.schedule_interval(self.pt,1/60)
+        Clock.schedule_interval(self.pt,1)
 
 class LokiColorApp(App):
     def build(self):
-        #game = LokiColorG()
         sm = ScreenManager()
-        sm.switch_to(GameScreen())
+        sm.switch_to(GameScreen(name='gg'))
         #Clock.schedule_interval(game.update,1/60.0)
         return sm
 
