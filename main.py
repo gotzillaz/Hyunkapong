@@ -14,38 +14,6 @@ from random import randint
 from math import *
 from sys import exit
 
-Builder.load_string("""
-<GameBall>:
-    size: 30,30
-    canvas: 
-        Color:
-            rgba: 1,0,0,1
-        Ellipse:
-            pos: self.pos
-            size: 30,30
-
-<GameMap>:
-    size: 500,500
-    center_x: self.parent.center_x
-    center_y: self.parent.center_y
-    rows: 4
-    cols: 4
-    spacing: 0
-
-<GameScreen>:
-    gameball: bb
-    gamemap: gg
-
-    GameMap:
-        id: gg
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
-        size_hint: None,None
-    
-    GameBall:
-        id: bb
-        center: self.center
-""")
 class LokiColorG(Widget):
     pass
 
@@ -60,14 +28,19 @@ class GameMap(GridLayout):
         print self.pos,self.center_x,self.center_y
     
 class GameBall(Widget):
+    def changePos(self,x,y):
+        self.x = x
+        self.y = y
     def __init__(self,**kwargs):
         super(GameBall,self).__init__(**kwargs)
 
-class GameScreen(Screen):
+class GameTab(Widget):
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
 
     def pt(self,x):
+        #self.gameball.size = [30,30]
+        #self.gameball.
         print "xx" 
         print self.children
         for x in self.children[1].children:
@@ -75,13 +48,18 @@ class GameScreen(Screen):
         print self.children[0].center, "zzzz"
         print self.children[0].size,self.children[0]
         print self.center,self
-        self.gameball.center = self.children[1].children[randint(0,15)].center
+        radius = self.gameball.size[0]/2
+        self.gameball.changePos(self.children[1].children[randint(0,15)].center_x-radius,self.children[1].children[randint(0,15)].center_y-radius)
+        #self.gameball.center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = tup
 
     def __init__(self,**kwargs):
-        super(GameScreen,self).__init__(**kwargs)
+        super(GameTab,self).__init__(**kwargs)
         Clock.schedule_interval(self.pt,1)
+
+class GameScreen(Screen):
+    pass
 
 class LokiColorApp(App):
     def build(self):
