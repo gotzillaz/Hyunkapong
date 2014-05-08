@@ -10,6 +10,7 @@ from kivy.uix.button import Button
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import Config
+from kivy.graphics import Color,Ellipse
 from random import randint
 from math import *
 from sys import exit
@@ -22,7 +23,7 @@ class GameMap(GridLayout):
         super(GameMap, self).__init__(**kwargs)
         for x in xrange(4):
             for y in xrange(4):
-                self.add_widget(Button(id='m'+str(x)+str(y),size=(50,50),text=str(x)+' '+str(y)))
+                self.add_widget(Button(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y)))
         for x in self.children:
             print x.pos,x.parent.pos,x.text,x.center_x,x.center_y
         print self.pos,self.center_x,self.center_y
@@ -31,12 +32,20 @@ class GameBall(Widget):
     def changePos(self,x,y):
         self.x = x
         self.y = y
+    
+    def changeColor(self):
+        self.canvas.clear()
+        self.canvas.add(Color(randint(0,100)/100.0,randint(0,100)/100.0,randint(0,100)/100.0))    
+        self.canvas.add(Ellipse(size=self.size,pos=self.pos))
+
     def __init__(self,**kwargs):
         super(GameBall,self).__init__(**kwargs)
 
 class GameTab(Widget):
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
+
+    #map = []
 
     def pt(self,x):
         #self.gameball.size = [30,30]
@@ -48,8 +57,9 @@ class GameTab(Widget):
         print self.children[0].center, "zzzz"
         print self.children[0].size,self.children[0]
         print self.center,self
-        radius = self.gameball.size[0]/2
+        radius = self.gameball.size[0]/2.0
         self.gameball.changePos(self.children[1].children[randint(0,15)].center_x-radius,self.children[1].children[randint(0,15)].center_y-radius)
+        self.gameball.changeColor()
         #self.gameball.center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = tup
