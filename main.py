@@ -45,7 +45,7 @@ class GameMap(GridLayout):
         print self.gridpos
     
 class GameBall(Widget):
-    ballgrid = [1,1]
+    ballgrid = [0,0]
 
     def changePos(self,x,y):
         self.x = x
