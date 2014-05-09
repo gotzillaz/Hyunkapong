@@ -31,6 +31,27 @@
         id: bb
         center: self.center
 
+<GameControlCommand>:
+    size: 500,500
+    center_x: self.parent.center_x
+    center_y: self.parent.center_y
+    rows: 6
+    row: 6
+    spacing: 0
+
+<GameControlFunction>:
+
+<GameControl>:
+    gamecontrolcommand: cc
+
+    GameControlCommand:
+        id: cc
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
+        size_hint: None,None
+
 <GameScreen>:
-    GameTab:
-        id: tab
+    GameControl:
+        id: control
+    #GameTab:
+    #    id: tab

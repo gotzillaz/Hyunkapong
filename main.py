@@ -90,12 +90,22 @@ class GameTab(Widget):
         super(GameTab,self).__init__(**kwargs)
         Clock.schedule_interval(self.pt,1)
 
+class GameControlCommand(GridLayout):
+    pass
+
+class GameControlFunction(GridLayout):
+    pass
+
 class GameScreen(Screen):
+    pass
+
+class GameControl(Screen):
     pass
 
 class LokiColorApp(App):
     def build(self):
         sm = ScreenManager()
+        #sm.switch_to(GameControl(name='gg'))
         sm.switch_to(GameScreen(name='gg'))
         #Clock.schedule_interval(game.update,1/60.0)
         return sm
