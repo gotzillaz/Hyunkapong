@@ -26,7 +26,7 @@ class GameColor():
         return self.colorhash[color]
 
 class GamePlate(Widget):
-    color = ''
+    color = 'White'
     text = ''
     star = False
 
@@ -43,14 +43,16 @@ class GamePlate(Widget):
 
     def __init__(self,**kwargs):
         super(GamePlate, self).__init__(**kwargs)
-        self.changeColor('White')
+        self.changeColor(color)
 
 class GameMap(GridLayout):
     gridsize = 5
     gridpos = [[]]
+    color_table_now = [[]]
+    map_table_now = [[]]
     
-    def readMap(self,stage):
-        pass
+    def readMap(self,map_table,color_table,size):
+        self.gridsize = size
 
     def updateGridPos(self):
         for x in self.children:
@@ -66,7 +68,7 @@ class GameMap(GridLayout):
         super(GameMap, self).__init__(**kwargs)
         for x in xrange(5):
             for y in xrange(5):
-                self.add_widget(GamePlate(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y)))
+                self.add_widget(GamePlate(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y),color='Green'))
                 #self.add_widget(Button(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y)))
         for x in self.children:
             print x.pos,x.parent.pos,x.text,x.center_x,x.center_y
@@ -128,7 +130,13 @@ class GameTab(Widget):
         self.goenable = not self.goenable
 
     def readMap(self,stage):
-        pass
+        # Open map file
+        num_color = 3
+        map_size = 5
+        color_list = ['Red','Green','Blue']
+        map_table[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        start_pos = [1,1]
+        end_pos = [4,4]
 
     def changeStep(self, way):
         self.stepmethod = way
