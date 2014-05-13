@@ -43,6 +43,9 @@ class GamePlate(Widget):
 class GameMap(GridLayout):
     gridsize = 5
     gridpos = [[]]
+    
+    def readMap(self,stage):
+        pass
 
     def updateGridPos(self):
         for x in self.children:
@@ -79,8 +82,8 @@ class GameBall(Widget):
                 dx/=abs(dx)
             if dy!=0:
                 dy/=abs(dy)
-            self.pos[0]+=dy*1.0
-            self.pos[1]-=dx*1.0
+            self.pos[0]+=dy*5.0
+            self.pos[1]-=dx*5.0
             self.changeColor()
             nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
             print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
@@ -118,6 +121,9 @@ class GameTab(Widget):
 
     def toggle(self):
         self.goenable = not self.goenable
+
+    def readMap(self,stage):
+        pass
 
     def changeStep(self, way):
         self.stepmethod = way
@@ -176,7 +182,7 @@ class GameTab(Widget):
 
     def __init__(self,**kwargs):
         super(GameTab,self).__init__(**kwargs)
-        Clock.schedule_interval(self.pt,2)
+        Clock.schedule_interval(self.pt,1)
 
 class GameScreen(Screen):
     pass
