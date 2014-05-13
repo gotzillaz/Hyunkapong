@@ -10,11 +10,11 @@
             size: self.size
 
 <GameMap>:
-    size: 500,500
+    size: 400,400
     center_x: self.parent.center_x
     center_y: self.parent.center_y
-    rows: 4
-    cols: 4
+    rows: 5
+    cols: 5
     spacing: 0
 
 <GameTab>:
@@ -31,6 +31,32 @@
         id: bb
         center: self.center
 
+    Button:
+        size: 150,30
+        pos: 0,0
+        text: 'U'
+        on_press: self.parent.changeStep('U')
+    Button:
+        size: 150,30
+        pos: 150,0
+        text: 'D'
+        on_press: self.parent.changeStep('D')
+    Button:
+        size: 150,30
+        pos: 300,0
+        text: 'L'
+        on_press: self.parent.changeStep('L')
+    Button:
+        size: 150,30
+        pos: 450,0
+        text: 'R'
+        on_press: self.parent.changeStep('R')
+    Button:
+        size: 150,30
+        pos: 600,0
+        text: 'Toggle'
+        on_press: self.parent.toggle()
+        
 <GameScreen>:
     GameTab:
         id: tab
