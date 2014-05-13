@@ -95,8 +95,8 @@ class GameBall(Widget):
                 dx/=abs(dx)
             if dy!=0:
                 dy/=abs(dy)
-            self.pos[0]+=dy*5.0
-            self.pos[1]-=dx*5.0
+            self.pos[0]+=dy*4.0
+            self.pos[1]-=dx*4.0
             self.changeColor()
             nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
             print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
@@ -148,12 +148,12 @@ class GameTab(Widget):
         num_color = 3
         map_size = 5
         color_list = ['Red','Green','Blue']
-        color_table = [['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White']]
+        color_table = [['Blue','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White']]
         map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         start_pos = [1,1]
         end_pos = [4,4]
         print self.center ,"KUY"
-        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size=[400,400],center=self.center,rows=map_size,cols=map_size,spacing=5,size_hint=[None,None])
+        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size=[400,400],center=self.center,rows=map_size,cols=map_size,spacing=0,size_hint=[None,None])
         self.add_widget(self.gamemap)
         self.gameball = GameBall(size=[50,50])
         self.add_widget(self.gameball)
