@@ -1,35 +1,37 @@
 #:kivy 1.8.0
 
-<GameBall>:
-    size: 50,50
-    canvas: 
-        Color:
-            rgba: 1,0,0,1
-        Ellipse:
-            pos: self.pos
-            size: self.size
+#<GameBall>:
+#    size: 50,50
+#    canvas: 
+#        Color:
+#            rgba: 1,0,0,1
+#        Ellipse:
+#            pos: self.pos
+#            size: self.size
 
-<GameMap>:
-    size: 400,400
-    center_x: self.parent.center_x
-    center_y: self.parent.center_y
-    rows: 5
-    cols: 5
-    spacing: 0
+#<GameMap>:
+#    size: 400,400
+#    center_x: self.parent.center_x
+#    center_y: self.parent.center_y
+#    rows: 5
+#    cols: 5
+#    spacing: 0
 
 <GameTab>:
-    gameball: bb
-    gamemap: gg
+    pos:0,0
+    #gameball: bb
+    #gamemap: gg
 
-    GameMap:
-        id: gg
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
-        size_hint: None,None
+    #GameMap:
+    #    id: gg
+    #    map_t: []
+    #    center_x: self.parent.center_x
+    #    center_y: self.parent.center_y
+    #    size_hint: None,None
     
-    GameBall:
-        id: bb
-        center: self.center
+    #GameBall:
+    #    id: bb
+    #    center: self.center
 
     Button:
         size: 150,30
