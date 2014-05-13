@@ -19,8 +19,13 @@ from sys import exit
 class LokiColorG(Widget):
     pass
 
-class GamePlate(Widget):
+class GameColor():
     colorhash = {'Red':Color(1,0,0),'Green':Color(0,1,0),'Blue':Color(0,0,1),'White':Color(1,1,1),'Yellow':Color(1,1,0),'Sblue':Color(0,1,1),'Pink':Color(1,0,0.6),'Gray':Color(0.2,0.2,0.2),'Orange':Color(1,0.5,0),'Cream':Color(1,1,.5),'Purple':Color(0.8,0,1)}
+    
+    def getColor(self,color):
+        return self.colorhash[color]
+
+class GamePlate(Widget):
     color = ''
     text = ''
     star = False
@@ -33,7 +38,7 @@ class GamePlate(Widget):
     def changeColor(self, mycolor):
         self.color = mycolor
         self.canvas.clear()
-        self.canvas.add(self.colorhash[mycolor])
+        self.canvas.add(GameColor().getColor(mycolor))
         self.canvas.add(Rectangle(size=self.size,pos=self.pos))
 
     def __init__(self,**kwargs):
@@ -106,7 +111,7 @@ class GameBall(Widget):
     def changeColor(self):
         self.canvas.clear()
         self.canvas.add(Color(randint(0,100)/100.0,randint(0,100)/100.0,randint(0,100)/100.0))    
-        self.canvas.add(Color(1,1,1))
+        self.canvas.add(GameColor().getColor('White'))
         self.canvas.add(Ellipse(size=self.size,pos=self.pos))
 
     def __init__(self,**kwargs):
