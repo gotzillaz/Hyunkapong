@@ -5,6 +5,7 @@ from kivy.properties import ObjectProperty
 from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition , SlideTransition , WipeTransition , ShaderTransition, SwapTransition
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.lang import Builder
@@ -226,13 +227,206 @@ class GameTab(Widget):
         self.readStage()
         Clock.schedule_interval(self.pt,1)
 
+class GameControlCommand(FloatLayout):
+    offset = 400
+    origin_pos = [0,0]
+    position = []
+    grep = False
+    i = 0
+    def submitButton(self):
+        submit = {}
+        tmp = GameControlFunction.color
+        for i in xrange(len(GameControlFunction.obj_push)):
+            if GameControlFunction.obj_push[i] == 0:
+                submit[tmp[i]] = ''
+            else:
+                submit[tmp[i]] = GameControlFunction.obj_push[i].id
+        print submit
+    def releaseButton(self):
+        for x in GameControlFunction.obj_push:
+            if x !=0:
+                self.children[self.children.index(x)].pos = self.position[self.children.index(x)]
+        GameControlFunction.push = [False]*GameControlFunction.number
+        GameControlFunction.obj_push = [0]*GameControlFunction.number
+
+    def on_touch_move(self, touch):
+        if self.grep == False:
+            for d in self.children:
+                x,y = d.pos
+                if x < touch.x and x+50 > touch.x and y < touch.y and y+50 > touch.y:
+                    self.grep = True
+                    self.i = self.children.index(d)
+                    self.origin_pos = [x,y]
+                    break
+        else:
+            self.children[self.i].pos = [touch.x-25,touch.y-25]
+
+    def on_touch_up(self, touch):
+        if self.grep == True:
+            ## solve ##
+            solve = []
+            boolean = False
+            for j in range(len(GameControlFunction.push)):
+                click_x,click_y = self.children[self.i].pos
+                block_x,block_y = GameControlFunction.block_pos[j]
+                x_min = sorted([click_x , click_x+50 , block_x , block_x+50])
+                y_min = sorted([click_y , click_y+50 , block_y , block_y+50])
+                if (x_min[0:2] != [click_x,click_x+50] and x_min[0:2] != [block_x,block_x+50]) and (y_min[0:2] != [click_y,click_y+50] and y_min[0:2] != [block_y,block_y+50]):
+                    solve.append([j,(x_min[2]-x_min[1])*(y_min[2]-y_min[1])])
+            index = 0
+            if len(solve) == 0:
+                self.children[self.i].pos = self.position[self.i]
+                if self.children[self.i] in GameControlFunction.obj_push:
+                    GameControlFunction.push[GameControlFunction.obj_push.index(self.children[self.i])] = False
+                    GameControlFunction.obj_push[GameControlFunction.obj_push.index(self.children[self.i])] = 0
+                self.grep = False
+                #self.update()
+                return 
+            elif len(solve) == 1:
+                index = solve[0][0]
+                boolean = self.move(self.i,index)
+            else:
+                if solve[0][1] >= solve[1][1]:
+                    index = solve[0][0]
+                    if GameControlFunction.push[index] == True:
+                        index = solve[1][0]
+                        if GameControlFunction.push[index] == True:
+                            index = solve[0][0]
+                    boolean = self.move(self.i,index)
+                else :
+                    index = solve[1][0]
+                    if GameControlFunction.push[index] == True:
+                        index = solve[0][0]
+                        if GameControlFunction.push[index] == True:
+                            index = solve[1][0]
+                    boolean = self.move(self.i,index)
+            ## solve ##
+            if boolean:
+                self.children[self.i].pos = self.origin_pos
+            self.grep = False
+            #self.update()
+
+    def move(self,i,index):
+        if GameControlFunction.push[index] == True:
+            self.children[self.children.index(GameControlFunction.obj_push[index])].pos = self.position[self.children.index(GameControlFunction.obj_push[index])]
+            GameControlFunction.push[index] = False
+            GameControlFunction.obj_push[index] = 0
+
+            self.children[i].pos = GameControlFunction.block_pos[index]
+            GameControlFunction.push[index] = True
+            GameControlFunction.obj_push[index] = self.children[i]
+            return False
+
+        elif GameControlFunction.push[index] == False:
+            self.children[i].pos = GameControlFunction.block_pos[index]
+            if self.children[i] in GameControlFunction.obj_push:
+                GameControlFunction.push[GameControlFunction.obj_push.index(self.children[i])] = False
+                GameControlFunction.obj_push[GameControlFunction.obj_push.index(self.children[i])] = 0
+            GameControlFunction.push[index] = True
+            GameControlFunction.obj_push[index] = self.children[i]
+            return False
+        return True
+
+    def update(self):
+        num_obj = 6-GameControlFunction.obj_push.count(0)
+        all_obj = []
+        for i in range(6):
+            if GameControlFunction.obj_push[i] != 0:
+                all_obj.append(i)
+        run = 0
+        for i in all_obj:
+            if i != run: 
+                self.move(self.children.index(GameControlFunction.obj_push[i]),run)
+            run+=1
+
+    def __init__(self,**kwargs):
+        super(GameControlCommand, self).__init__(**kwargs)
+        data = ['U','D','L','R']
+        index = 0
+        for x in xrange(5):
+            for y in xrange(5):
+                type_button = data[index]
+                index+=1
+                for z in xrange(len(GameControlFunction.color)+1):
+                    if type_button == 'U':
+                        self.add_widget(Button(background_normal='up.png',background_down='up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                    elif type_button == 'D':
+                        self.add_widget(Button(background_normal='down.png',background_down='down_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                    elif type_button == 'R':
+                        self.add_widget(Button(background_normal='right.png',background_down='right_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                    elif type_button == 'L':
+                        self.add_widget(Button(background_normal='left.png',background_down='left_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                if index >= len(data):
+                        break
+            if index >= len(data):
+                break
+        for x in self.children:
+            a,b = x.pos
+            self.position.append([a,b])
+
+class GameControlFunction(FloatLayout):
+    start = 400
+    offset = 2
+    push = [False]
+    obj_push = [0]
+    block_pos = []
+    color = []
+    number = 0
+
+    def __init__(self,**kwargs):
+        super(GameControlFunction, self).__init__(**kwargs)
+        f = open("input.txt")
+        self.color = f.readlines()[0].split(' ')
+        f.close()
+        GameControlFunction.number = int(self.color[0])
+        GameControlFunction.color = self.color[1:]
+        GameControlFunction.push = [False]*self.number
+        GameControlFunction.obj_push = self.obj_push*self.number
+        index = 0
+        for x in xrange(GameControlFunction.number):
+            if GameControlFunction.color[x] == 'Red':
+                self.canvas.add(Color(1,0,0))
+            elif GameControlFunction.color[x] == 'Green':
+                self.canvas.add(Color(0,1,0))
+            elif GameControlFunction.color[x] == 'Blue':
+                self.canvas.add(Color(0,0,1))
+            elif GameControlFunction.color[x] == 'Yellow':
+                self.canvas.add(Color(1,1,0))
+            elif GameControlFunction.color[x] == 'Sblue':
+                self.canvas.add(Color(0,1,1))
+            elif GameControlFunction.color[x] == 'Pink':
+                self.canvas.add(Color(1,0,.6))
+            elif GameControlFunction.color[x] == 'Gray':
+                self.canvas.add(Color(.2,.2,.2))
+            elif GameControlFunction.color[x] == 'White':
+                self.canvas.add(Color(1,1,1))
+            elif GameControlFunction.color[x] == 'Orange':
+                self.canvas.add(Color(1,.5,0))
+            elif GameControlFunction.color[x] == 'Cream':
+                self.canvas.add(Color(1,1,.5))
+            elif GameControlFunction.color[x] == 'Purple':
+                self.canvas.add(Color(.8,0,1))
+            self.canvas.add(Rectangle(size=(50, 50),pos=(50 + index*self.offset + index*50,self.start)))
+            self.block_pos.append([50 + index*self.offset + index*50,self.start])
+            index+=1
+            if index > 5:
+                index = 0
+                self.start -= 70
+
+class ReleaseButton(FloatLayout):
+    pass
+
 class GameScreen(Screen):
+    pass
+
+class GameControl(Screen):
     pass
 
 class LokiColorApp(App):
     def build(self):
         sm = ScreenManager()
-        sm.switch_to(GameScreen(name='gg'))
+        sm.switch_to(GameControl(name='gg'))
+        #sm.switch_to(GameScreen(name='gg'))
         #Clock.schedule_interval(game.update,1/60.0)
         return sm
 

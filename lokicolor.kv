@@ -59,6 +59,55 @@
         text: 'Toggle'
         on_press: self.parent.toggle()
         
+<GameControlCommand>:
+    size: 500,500
+    center_x: self.parent.center_x
+    center_y: self.parent.center_y
+    rows: 6
+    cols: 6
+    spacing: 0
+
+<GameControl>:
+    gamecontrolcommand: cc
+    gamecontrolfunction: dd
+    releasebutton: ee
+
+    GameControlFunction: 
+        id: dd
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
+        size_hint: None,None
+        
+    GameControlCommand:
+        id: cc
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
+        size_hint: None,None
+
+    Button:
+        id: ee
+        pos: 500,450
+        size: 50,50
+        background_normal: 're.png'
+        background_down: 're_c.png'
+        #center_x: self.parent.center_x
+        #center_y: self.parent.center_y
+        size_hint: None,None
+        on_press: self.parent.gamecontrolcommand.releaseButton()
+
+    Button:
+        id: ee
+        pos: 500,300
+        size: 100,50
+        background_normal: 'submit.png'
+        background_down: 'submit_x.png'
+        #center_x: self.parent.center_x
+        #center_y: self.parent.center_y
+        size_hint: None,None
+        on_press: self.parent.gamecontrolcommand.submitButton()
+
 <GameScreen>:
-    GameTab:
-        id: tab
+    GameControl:
+        id: control
+    #GameTab:
+    #    id: tab
