@@ -28,7 +28,7 @@ class GameColor():
     
     def getColor(self,color):
         return self.colorhash[color]
-    def getColorRGB(self,color)
+    def getColorRGB(self,color):
         return self.colorhashList[color]
 
 class GamePlate(Widget):
@@ -124,14 +124,14 @@ class GameBall(Widget):
             self.pos[1] = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]][1]-self.size[1]/2
     """
     def ballAnimation(self,next_grid):
-        #next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
-        #print "Next_pos" , next_pos
+        next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
+        print "Next_pos" , next_pos
         #next_pos = self.parent.gamemap.gridpos[0][1]
-        #animate = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0)
+        ani = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0)
         #self.changeColor()
-        ani = Animation(x=self.x+50,y=self.y+50,step=1/60.0)
+        #ani = Animation(x=self.x+50,y=self.y+50,step=1/60.0)
         ani.start(self)
-        #self.changeGrid(next_grid[0],next_grid[1])
+        self.changeGrid(next_grid[0],next_grid[1])
         #self.changeGrid(1,2)
 
     def changeGrid(self,x,y):
@@ -148,14 +148,14 @@ class GameBall(Widget):
         self.x = x
         self.y = y
     
-    def changeColor(self):
+    def changeColor(self,color):
         #self.canvas.clear()
         #for x in dir(self.canvas):
         #    print x,getattr(self.canvas,x)
         print self.canvas.children
         print dir(self.canvas.children[1])
         print self.canvas.children[1].needs_redraw
-        self.canvas.children[0].rgb=[1,1,0]
+        self.canvas.children[0].rgb = GameColor.getColorRGB(color)
         #self.clear_widgets()
         #my_canvas = Canvas()
         #my_canvas.add(GameColor().getColor('Green'))
@@ -255,7 +255,7 @@ class GameTab(Widget):
         if self.goenable:
             self.changeStep(tmpst[randint(0,3)])
         if self.stepmethod != '':
-            #self.ballControl()
+            self.ballControl()
             pass
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
@@ -268,7 +268,7 @@ class GameTab(Widget):
         super(GameTab,self).__init__(**kwargs)
         self.pos = [0,0]
         self.readStage()
-        #Clock.schedule_interval(self.pt,1)
+        Clock.schedule_interval(self.pt,1)
 
 class GameControlCommand(FloatLayout):
     offset = 400
