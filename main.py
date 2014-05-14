@@ -8,6 +8,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import Config
@@ -108,7 +109,7 @@ class GameBall(Widget):
         next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
         print "Next_pos" , next_pos
         #next_pos = self.parent.gamemap.gridpos[0][1]
-        ani = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0)
+        ani = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0,duration=0.1)
         #self.changeColor()
         #ani = Animation(x=self.x+50,y=self.y+50,step=1/60.0)
         ani.start(self)
@@ -153,10 +154,11 @@ class GameBall(Widget):
         #Clock.schedule_interval(self.smoothBall,1.0/100000)
 
 class GameTab(Widget):
-    num_stage = 0
+    stage_id = 0
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
     stepmethod = ''
+    color_direction = {}
     goenable = False
     
     def updateBallColor(self):
@@ -164,19 +166,29 @@ class GameTab(Widget):
         next_color = self.gamemap.getGridColor(r,c)
         if next_color != 'White':
             self.gameball.changeColor(next_color)
+    
 
     def checkEndGrid(self):
         if self.gameball.endgrid == self.gameball.ballgrid:
+            self.changeStep('')
+            popup = Popup(title='Test popup',
+                content=Label(text='Hello world'),
+                size_hint=(0.5, 0.5))
+            popup.open()
             print "ENDDING"
+            self.readStage()
 
     def toggle(self):
         self.goenable = not self.goenable
 
     def readStage(self):
         # Open stage file
+        self.clear_widgets()
         num_color = 3
         map_size = 6
         color_list = ['Red','Green','Blue']
+        self.color_direction = { c:'' for c in color_list}
+        #print self.color_direction
         #color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
         color_table = [['Blue','White','White','White','White','Blue'],['White','White','Green','Red','White','White'],['Red','White','White','White','Red','White','Blue'],['White','White','Red','White','White','Green'],['Red','White','Blue','White','White','White'],['White','White','Green','Red','White','White']]
         map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
@@ -184,8 +196,13 @@ class GameTab(Widget):
         end_pos = [4,4]
         print self.center ,"C_Center"
         # Create GameMap
-        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size=[400,400],center=self.center,rows=map_size,cols=map_size,spacing=0,size_hint=[None,None])
+        sizing = min(Window.size)*0.6
+        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center=self.center,rows=map_size,cols=map_size,spacing=0)
+        self.gamemap.bind(size=(min(Window.size)/2,min(Window.size)/2))
         self.add_widget(self.gamemap)
+        self.gamemap.size_hint=(0.1,0.1)
+        #self.gamemap.size=(500,500)
+        print self.gamemap.size,self.gamemap.size_hint,"GAMEMAP SIZE"
         # Create GameBall
         self.gameball = GameBall(size=[50,50])
         self.add_widget(self.gameball)
@@ -247,7 +264,7 @@ class GameTab(Widget):
         if self.stepmethod != '':
             self.updateBallColor()
             self.ballControl()
-        self.checkEndGrid()
+            self.checkEndGrid()
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()
@@ -258,8 +275,9 @@ class GameTab(Widget):
     def __init__(self,**kwargs):
         super(GameTab,self).__init__(**kwargs)
         self.pos = [0,0]
+        self.size = Window.size
         self.readStage()
-        Clock.schedule_interval(self.pt,1)
+        Clock.schedule_interval(self.pt,0.5)
 
 class GameControlCommand(FloatLayout):
     offset = 400
