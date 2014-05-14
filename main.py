@@ -12,6 +12,8 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import Config
 from kivy.graphics import Color,Ellipse,Rectangle
+from kivy.graphics.instructions import Canvas
+from kivy.animation import Animation
 from random import randint
 from math import *
 from sys import exit
@@ -90,8 +92,10 @@ class GameBall(Widget):
     distance = 1.0
 
     #self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius
+    """
     def smoothBall(self,tt):
-        distance = abs(self.parent.gamemap.gridpos[0][0][0] - self.parent.gamemap.gridpos[0][1][0])/40.0
+        distance = abs(self.parent.gamemap.gridpos[0][0][0] - self.parent.gamemap.gridpos[0][1][0])/30.0
+        #distance = 1
         #print "Distance",distance
         if self.ballgrid != self.oldgrid:
             dx = self.ballgrid[0] - self.oldgrid[0]
@@ -115,6 +119,17 @@ class GameBall(Widget):
             #print self.parent,"AAAAAAAAAAAA"
             self.pos[0] = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]][0]-self.size[0]/2
             self.pos[1] = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]][1]-self.size[1]/2
+    """
+    def ballAnimation(self,next_grid):
+        #next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
+        #print "Next_pos" , next_pos
+        #next_pos = self.parent.gamemap.gridpos[0][1]
+        #animate = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0)
+        #self.changeColor()
+        ani = Animation(x=self.x+50,y=self.y+50,step=1/60.0)
+        ani.start(self)
+        #self.changeGrid(next_grid[0],next_grid[1])
+        #self.changeGrid(1,2)
 
     def changeGrid(self,x,y):
         self.ballgrid[0] = x
@@ -131,14 +146,27 @@ class GameBall(Widget):
         self.y = y
     
     def changeColor(self):
-        self.canvas.clear()
-        self.canvas.add(Color(randint(0,100)/100.0,randint(0,100)/100.0,randint(0,100)/100.0))    
-        self.canvas.add(GameColor().getColor('Green'))
-        self.canvas.add(Ellipse(size=self.size,pos=self.pos))
+        #self.canvas.clear()
+        #for x in dir(self.canvas):
+        #    print x,getattr(self.canvas,x)
+        print self.canvas.children
+        print dir(self.canvas.children[1])
+        print self.canvas.children[1].needs_redraw
+        self.canvas.children[0].rgb=[1,1,0]
+        #self.clear_widgets()
+        #my_canvas = Canvas()
+        #my_canvas.add(GameColor().getColor('Green'))
+        #my_canvas.add(Ellipse(size=self.size,pos=self.pos))
+        #self.canvas = my_canvas
+        #self.canvas.add(Color(randint(0,100)/100.0,randint(0,100)/100.0,randint(0,100)/100.0))    
+        #self.canvas.children[0]=(Color(1,1,0))
+        #self.canvas.children[2]=(Ellipse(size=self.size,pos=self.pos))
+        #self.canvas.ask_update()
+        #self.add_widget(pic)
 
     def __init__(self,**kwargs):
         super(GameBall,self).__init__(**kwargs)
-        Clock.schedule_interval(self.smoothBall,0.0001)
+        #Clock.schedule_interval(self.smoothBall,1.0/100000)
 
 class GameTab(Widget):
     num_stage = 0
@@ -154,9 +182,10 @@ class GameTab(Widget):
     def readStage(self):
         # Open stage file
         num_color = 3
-        map_size = 5
+        map_size = 6
         color_list = ['Red','Green','Blue']
-        color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
+        #color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
+        color_table = [['Blue','White','White','White','White','Blue'],['White','White','Green','Red','White','White'],['Red','White','White','White','Red','White','Blue'],['White','White','Red','White','White','Green'],['Red','White','Blue','White','White','White'],['White','White','Green','Red','White','White']]
         map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         start_pos = [1,1]
         end_pos = [4,4]
@@ -173,23 +202,26 @@ class GameTab(Widget):
         self.stepmethod = way
 
     def ballControl(self):
+        now_grid = [self.gameball.ballgrid[0],self.gameball.ballgrid[1]]
         if self.stepmethod == 'U':
-            self.gameball.ballgrid[0] -=1
+            now_grid[0] -=1
         elif self.stepmethod == 'D':
-            self.gameball.ballgrid[0] +=1
+            now_grid[0] +=1
         elif self.stepmethod == 'L':
-            self.gameball.ballgrid[1] -=1
+            now_grid[1] -=1
         elif self.stepmethod == 'R':
-            self.gameball.ballgrid[1] +=1
-        if self.gameball.ballgrid[0]<0:
-            self.gameball.ballgrid[0] = 0
-        if self.gameball.ballgrid[0]>=self.gamemap.gridsize:
-            self.gameball.ballgrid[0] = self.gamemap.gridsize-1
-        if self.gameball.ballgrid[1]<0:
-            self.gameball.ballgrid[1] = 0
-        if self.gameball.ballgrid[1]>=self.gamemap.gridsize:
-            self.gameball.ballgrid[1] = self.gamemap.gridsize-1
+            now_grid[1] +=1
+        if now_grid[0]<0:
+            now_grid[0] = 0
+        if now_grid[0]>=self.gamemap.gridsize:
+           now_grid[0] = self.gamemap.gridsize-1
+        if now_grid[1]<0:
+            now_grid[1] = 0
+        if now_grid[1]>=self.gamemap.gridsize:
+            now_grid[1] = self.gamemap.gridsize-1
         self.changeStep('')
+        print "Compare :",now_grid,self.gameball.ballgrid
+        self.gameball.ballAnimation(now_grid)
 
     def pt(self,x):
         #self.gameball.size = [30,30]
@@ -219,10 +251,12 @@ class GameTab(Widget):
         tmpst = ['U','D','L','R']
         if self.goenable:
             self.changeStep(tmpst[randint(0,3)])
-        self.ballControl()
+        if self.stepmethod != '':
+            #self.ballControl()
+            pass
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
-        self.gameball.changeColor()
+        #self.gameball.changeColor()
         #self.gameball.center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = self.children[1].children[randint(0,15)].center
         #self.children[0].center = tup
@@ -231,7 +265,7 @@ class GameTab(Widget):
         super(GameTab,self).__init__(**kwargs)
         self.pos = [0,0]
         self.readStage()
-        Clock.schedule_interval(self.pt,1)
+        #Clock.schedule_interval(self.pt,1)
 
 class GameControlCommand(FloatLayout):
     offset = 400
@@ -353,7 +387,7 @@ class GameControlCommand(FloatLayout):
             for y in xrange(5):
                 type_button = data[index]
                 index+=1
-                for z in xrange(len(GameControlFunction.color)+1):
+                for z in xrange(len(GameControlFunction.color)+2):
                     if type_button == 'U':
                         self.add_widget(Button(background_normal='up.png',background_down='up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                     elif type_button == 'D':
@@ -430,6 +464,8 @@ class GameControl(Screen):
 
 class LokiColorApp(App):
     def build(self):
+        Config.set('graphics','maxfps',300)
+        Config.write()
         sm = ScreenManager()
         #sm.switch_to(GameControl(name='gg'))
         sm.switch_to(GameScreen(name='gg'))

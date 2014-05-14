@@ -3,3 +3,6 @@
 - In each screen (menu,setting,play) should use screen manager and screen for easy to manage
 - Try to use add_widget and remove_widget method for create some objects in python script
 - Try to create many files for each object
+
+=== Edit Registration form
+https://docs.google.com/forms/d/1WqVGr_FRJ3oARwIG5iPHMvmnOd4dTW-PHt8e0Qc9dtc/viewform?embedded=true&edit=ChMyMTM3NTIxOTQ2NTIxNDQ0MzY1EK244pCQ8J7kOg

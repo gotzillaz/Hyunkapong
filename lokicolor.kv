@@ -1,13 +1,13 @@
 #:kivy 1.8.0
 
-#<GameBall>:
-#    size: 50,50
-#    canvas: 
-#        Color:
-#            rgba: 1,0,0,1
-#        Ellipse:
-#            pos: self.pos
-#            size: self.size
+<GameBall>:
+    size: 50,50
+    canvas: 
+        Color:
+            rgba: 1,0,0,1
+        Ellipse:
+            pos: self.pos
+            size: self.size
 
 #<GameMap>:
 #    size: 400,400
@@ -59,6 +59,18 @@
         text: 'Toggle'
         on_press: self.parent.toggle()
         
+    Button:
+        size: 10,30
+        pos:770,0
+        text: 'GG'
+        on_press: self.parent.gameball.ballAnimation([0,0])
+
+    Button:
+        size: 10,30
+        pos:790,0
+        text: 'CC'
+        on_press: self.parent.gameball.changeColor()
+
 <GameControlCommand>:
     size: 500,500
     center_x: self.parent.center_x
