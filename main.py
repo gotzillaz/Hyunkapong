@@ -24,9 +24,12 @@ class LokiColorG(Widget):
 
 class GameColor():
     colorhash = {'Red':Color(1,0,0),'Green':Color(0,1,0),'Blue':Color(0,0,1),'White':Color(1,1,1),'Yellow':Color(1,1,0),'Sblue':Color(0,1,1),'Pink':Color(1,0,0.6),'Gray':Color(0.2,0.2,0.2),'Orange':Color(1,0.5,0),'Cream':Color(1,1,.5),'Purple':Color(0.8,0,1)}
+    colorhashList = {'Red':[1,0,0],'Green':[0,1,0],'Blue':[0,0,1],'White':[1,1,1],'Yellow':[1,1,0],'Sblue':[0,1,1],'Pink':[1,0,0.6],'Gray':[0.2,0.2,0.2],'Orange':[1,0.5,0],'Cream':[1,1,.5],'Purple':[0.8,0,1]}
     
     def getColor(self,color):
         return self.colorhash[color]
+    def getColorRGB(self,color)
+        return self.colorhashList[color]
 
 class GamePlate(Widget):
     color = 'White'
