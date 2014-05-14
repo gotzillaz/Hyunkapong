@@ -165,6 +165,10 @@ class GameTab(Widget):
         if next_color != 'White':
             self.gameball.changeColor(next_color)
 
+    def checkEndGrid(self):
+        if self.gameball.endgrid == self.gameball.ballgrid:
+            print "ENDDING"
+
     def toggle(self):
         self.goenable = not self.goenable
 
@@ -243,6 +247,7 @@ class GameTab(Widget):
         if self.stepmethod != '':
             self.updateBallColor()
             self.ballControl()
+        self.checkEndGrid()
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()
