@@ -47,6 +47,9 @@ class GamePlate(Widget):
         self.canvas.add(GameColor().getColor(mycolor))
         self.canvas.add(Rectangle(size=self.size,pos=self.pos))
 
+    def getColor(self):
+        return self.color
+
     def __init__(self,color,**kwargs):
         super(GamePlate, self).__init__(**kwargs)
         self.color = color
@@ -62,6 +65,11 @@ class GameMap(GridLayout):
         self.gridsize = size
         self.map_table = [[x for x in y] for y in map_table]
         self.color_table = [[x for x in y] for y in color_table]
+
+    def getGridColor(self,x,y):
+        for g in self.children:
+            if g.id == 'm'+str(x)+str(y):
+                return g.getColor()
 
     def updateGridPos(self):
         for x in self.children:
@@ -95,34 +103,7 @@ class GameBall(Widget):
     distance = 1.0
 
     #self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius
-    """
-    def smoothBall(self,tt):
-        distance = abs(self.parent.gamemap.gridpos[0][0][0] - self.parent.gamemap.gridpos[0][1][0])/30.0
-        #distance = 1
-        #print "Distance",distance
-        if self.ballgrid != self.oldgrid:
-            dx = self.ballgrid[0] - self.oldgrid[0]
-            dy = self.ballgrid[1] - self.oldgrid[1]
-            if dx!=0:
-                dx/=abs(dx)
-            if dy!=0:
-                dy/=abs(dy)
-            self.pos[0]+=dy * distance
-            self.pos[1]-=dx * distance
-            self.changeColor()
-            nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
-            print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
-            if abs((nextpos[0]-self.pos[0]-self.size[0]/2))<= distance and bool(abs(dy)) or (abs(nextpos[1]-self.pos[1]-self.size[1]/2) <= distance and bool(abs(dx))):
-                self.pos[0] = nextpos[0]
-                self.pos[1] = nextpos[1]
-                self.oldgrid[0] = self.ballgrid[0]
-                self.oldgrid[1] = self.ballgrid[1]
-                print "FIN"
-        else:
-            #print self.parent,"AAAAAAAAAAAA"
-            self.pos[0] = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]][0]-self.size[0]/2
-            self.pos[1] = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]][1]-self.size[1]/2
-    """
+
     def ballAnimation(self,next_grid):
         next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
         print "Next_pos" , next_pos
@@ -155,7 +136,7 @@ class GameBall(Widget):
         print self.canvas.children
         print dir(self.canvas.children[1])
         print self.canvas.children[1].needs_redraw
-        self.canvas.children[0].rgb = GameColor.getColorRGB(color)
+        self.canvas.children[0].rgb = GameColor().getColorRGB(color)
         #self.clear_widgets()
         #my_canvas = Canvas()
         #my_canvas.add(GameColor().getColor('Green'))
@@ -178,6 +159,11 @@ class GameTab(Widget):
     stepmethod = ''
     goenable = False
     
+    def updateBallColor(self):
+        r,c = self.gameball.ballgrid
+        next_color = self.gamemap.getGridColor(r,c)
+        if next_color != 'White':
+            self.gameball.changeColor(next_color)
 
     def toggle(self):
         self.goenable = not self.goenable
@@ -255,8 +241,8 @@ class GameTab(Widget):
         if self.goenable:
             self.changeStep(tmpst[randint(0,3)])
         if self.stepmethod != '':
+            self.updateBallColor()
             self.ballControl()
-            pass
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()
