@@ -389,13 +389,13 @@ class GameControlCommand(FloatLayout):
                 index+=1
                 for z in xrange(len(GameControlFunction.color)+2):
                     if type_button == 'U':
-                        self.add_widget(Button(background_normal='up.png',background_down='up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                     elif type_button == 'D':
-                        self.add_widget(Button(background_normal='down.png',background_down='down_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                     elif type_button == 'R':
-                        self.add_widget(Button(background_normal='right.png',background_down='right_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                     elif type_button == 'L':
-                        self.add_widget(Button(background_normal='left.png',background_down='left_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                 if index >= len(data):
                         break
             if index >= len(data):
