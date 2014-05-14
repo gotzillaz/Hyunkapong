@@ -87,8 +87,12 @@ class GameBall(Widget):
     oldgrid = [0,0]
     endgrid = [1,1]
     ball_color = 'White'
+    distance = 1.0
+
     #self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius
     def smoothBall(self,tt):
+        distance = abs(self.parent.gamemap.gridpos[0][0][0] - self.parent.gamemap.gridpos[0][1][0])/40.0
+        #print "Distance",distance
         if self.ballgrid != self.oldgrid:
             dx = self.ballgrid[0] - self.oldgrid[0]
             dy = self.ballgrid[1] - self.oldgrid[1]
@@ -96,12 +100,12 @@ class GameBall(Widget):
                 dx/=abs(dx)
             if dy!=0:
                 dy/=abs(dy)
-            self.pos[0]+=dy*4
-            self.pos[1]-=dx*4
+            self.pos[0]+=dy * distance
+            self.pos[1]-=dx * distance
             self.changeColor()
             nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
             print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
-            if abs((nextpos[0]-self.pos[0]-self.size[0]/2))<= 0 and bool(abs(dy)) or (abs(nextpos[1]-self.pos[1]-self.size[1]/2) <= 0 and bool(abs(dx))):
+            if abs((nextpos[0]-self.pos[0]-self.size[0]/2))<= distance and bool(abs(dy)) or (abs(nextpos[1]-self.pos[1]-self.size[1]/2) <= distance and bool(abs(dx))):
                 self.oldgrid[0] = self.ballgrid[0]
                 self.oldgrid[1] = self.ballgrid[1]
                 print "FIN"
@@ -425,8 +429,8 @@ class GameControl(Screen):
 class LokiColorApp(App):
     def build(self):
         sm = ScreenManager()
-        sm.switch_to(GameControl(name='gg'))
-        #sm.switch_to(GameScreen(name='gg'))
+        #sm.switch_to(GameControl(name='gg'))
+        sm.switch_to(GameScreen(name='gg'))
         #Clock.schedule_interval(game.update,1/60.0)
         return sm
 
