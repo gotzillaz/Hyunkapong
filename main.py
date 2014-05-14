@@ -106,6 +106,8 @@ class GameBall(Widget):
             nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
             print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
             if abs((nextpos[0]-self.pos[0]-self.size[0]/2))<= distance and bool(abs(dy)) or (abs(nextpos[1]-self.pos[1]-self.size[1]/2) <= distance and bool(abs(dx))):
+                self.pos[0] = nextpos[0]
+                self.pos[1] = nextpos[1]
                 self.oldgrid[0] = self.ballgrid[0]
                 self.oldgrid[1] = self.ballgrid[1]
                 print "FIN"
