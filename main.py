@@ -95,8 +95,8 @@ class GameBall(Widget):
                 dx/=abs(dx)
             if dy!=0:
                 dy/=abs(dy)
-            self.pos[0]+=dy*4.0
-            self.pos[1]-=dx*4.0
+            self.pos[0]+=dy*4
+            self.pos[1]-=dx*4
             self.changeColor()
             nextpos = self.parent.gamemap.gridpos[self.ballgrid[0]][self.ballgrid[1]]
             print abs(nextpos[0]-self.pos[0]-self.size[0]/2) , abs(nextpos[1]-self.pos[1]-self.size[0]/2), bool(abs(dy)),bool(abs(dx)),"NOW"
@@ -131,7 +131,7 @@ class GameBall(Widget):
 
     def __init__(self,**kwargs):
         super(GameBall,self).__init__(**kwargs)
-        Clock.schedule_interval(self.smoothBall,1/60.0)
+        Clock.schedule_interval(self.smoothBall,0.0001)
 
 class GameTab(Widget):
     num_stage = 0
@@ -139,6 +139,7 @@ class GameTab(Widget):
     gamemap = ObjectProperty(None)
     stepmethod = ''
     goenable = False
+    
 
     def toggle(self):
         self.goenable = not self.goenable
@@ -148,16 +149,17 @@ class GameTab(Widget):
         num_color = 3
         map_size = 5
         color_list = ['Red','Green','Blue']
-        color_table = [['Blue','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White'],['White','White','White','White','White']]
-        map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
+        map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         start_pos = [1,1]
         end_pos = [4,4]
-        print self.center ,"KUY"
+        print self.center ,"C_Center"
+        # Create GameMap
         self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size=[400,400],center=self.center,rows=map_size,cols=map_size,spacing=0,size_hint=[None,None])
         self.add_widget(self.gamemap)
+        # Create GameBall
         self.gameball = GameBall(size=[50,50])
         self.add_widget(self.gameball)
-        #self.gamemap.readMap(map_table, color_table, map_size)
         self.gameball.setFirstStat(start_pos, end_pos)
 
     def changeStep(self, way):
