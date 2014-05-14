@@ -92,11 +92,27 @@ class GameTab(Widget):
         Clock.schedule_interval(self.pt,1)
 
 class GameControlCommand(FloatLayout):
-    offset = 350
+    offset = 400
     origin_pos = [0,0]
     position = []
     grep = False
     i = 0
+    def submitButton(self):
+        submit = {}
+        tmp = GameControlFunction.color
+        for i in xrange(len(GameControlFunction.obj_push)):
+            if GameControlFunction.obj_push[i] == 0:
+                submit[tmp[i]] = ''
+            else:
+                submit[tmp[i]] = GameControlFunction.obj_push[i].id
+        print submit
+    def releaseButton(self):
+        for x in GameControlFunction.obj_push:
+            if x !=0:
+                self.children[self.children.index(x)].pos = self.position[self.children.index(x)]
+        GameControlFunction.push = [False]*GameControlFunction.number
+        GameControlFunction.obj_push = [0]*GameControlFunction.number
+
     def on_touch_move(self, touch):
         if self.grep == False:
             for d in self.children:
@@ -114,8 +130,6 @@ class GameControlCommand(FloatLayout):
             ## solve ##
             solve = []
             boolean = False
-            print 'self.push = ',GameControlFunction.push
-            print 'self.obj_push = ',GameControlFunction.obj_push 
             for j in range(len(GameControlFunction.push)):
                 click_x,click_y = self.children[self.i].pos
                 block_x,block_y = GameControlFunction.block_pos[j]
@@ -123,7 +137,6 @@ class GameControlCommand(FloatLayout):
                 y_min = sorted([click_y , click_y+50 , block_y , block_y+50])
                 if (x_min[0:2] != [click_x,click_x+50] and x_min[0:2] != [block_x,block_x+50]) and (y_min[0:2] != [click_y,click_y+50] and y_min[0:2] != [block_y,block_y+50]):
                     solve.append([j,(x_min[2]-x_min[1])*(y_min[2]-y_min[1])])
-            print solve
             index = 0
             if len(solve) == 0:
                 self.children[self.i].pos = self.position[self.i]
@@ -159,7 +172,6 @@ class GameControlCommand(FloatLayout):
 
     def move(self,i,index):
         if GameControlFunction.push[index] == True:
-            print self.children
             self.children[self.children.index(GameControlFunction.obj_push[index])].pos = self.position[self.children.index(GameControlFunction.obj_push[index])]
             GameControlFunction.push[index] = False
             GameControlFunction.obj_push[index] = 0
@@ -181,7 +193,6 @@ class GameControlCommand(FloatLayout):
 
     def update(self):
         num_obj = 6-GameControlFunction.obj_push.count(0)
-        print num_obj
         all_obj = []
         for i in range(6):
             if GameControlFunction.obj_push[i] != 0:
@@ -216,8 +227,6 @@ class GameControlCommand(FloatLayout):
         for x in self.children:
             a,b = x.pos
             self.position.append([a,b])
-        print self.position
-                
 
 class GameControlFunction(FloatLayout):
     start = 400
@@ -267,7 +276,9 @@ class GameControlFunction(FloatLayout):
             if index > 5:
                 index = 0
                 self.start -= 70
-        print self.block_pos
+
+class ReleaseButton(FloatLayout):
+    pass
 
 class GameScreen(Screen):
     pass
