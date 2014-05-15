@@ -30,8 +30,8 @@ class PopupContent(BoxLayout):
     pass
 
 class GameColor():
-    colorhash = {'Red':Color(1,0,0),'Green':Color(0,1,0),'Blue':Color(0,0,1),'White':Color(1,1,1),'Yellow':Color(1,1,0),'Sblue':Color(0,1,1),'Pink':Color(1,0,0.6),'Gray':Color(0.2,0.2,0.2),'Orange':Color(1,0.5,0),'Cream':Color(1,1,.5),'Purple':Color(0.8,0,1)}
-    colorhashList = {'Red':[1,0,0],'Green':[0,1,0],'Blue':[0,0,1],'White':[1,1,1],'Yellow':[1,1,0],'Sblue':[0,1,1],'Pink':[1,0,0.6],'Gray':[0.2,0.2,0.2],'Orange':[1,0.5,0],'Cream':[1,1,.5],'Purple':[0.8,0,1]}
+    colorhash = {'Red':Color(0.99609,0.32031,0.32031),'Green':Color(0.15625,0.85546,0.46875),'Blue':Color(0.16406,0.75000,0.82421),'White':Color(1,1,1),'Yellow':Color(0.99609,0.88281,0.32031),'Sblue':Color(0,1,1),'Pink':Color(0.99609,0.37890,0.49609),'Gray':Color(0.2,0.2,0.2),'Orange':Color(1,0.5,0),'Cream':Color(1,1,.5),'Purple':Color(0.48046,0.41015,0.73437)}
+    colorhashList = {'Red':[0.99609,0.32031,0.32031],'Green':[0.15625,0.85546,0.46875],'Blue':[0.16406,0.75000,0.82421],'White':[1,1,1],'Yellow':[0.99609,0.88281,0.32031],'Sblue':[0,1,1],'Pink':[0.99609,0.37890,0.49609],'Gray':[0.2,0.2,0.2],'Orange':[1,0.5,0],'Cream':[1,1,.5],'Purple':[0.8,0,1]}
     
     def getColor(self,color):
         return self.colorhash[color]
@@ -601,8 +601,10 @@ class GameControlFunction(FloatLayout):
         index = 0
         GameControlFunction.block_pos = []
         for x in xrange(GameControlFunction.number):
+            self.canvas.add(GameColor().getColor(GameControlFunction.color[x]))
+            """
             if GameControlFunction.color[x] == 'Red':
-                self.canvas.add(Color(1,0,0))
+                self.canvas.add(GameColor.getcolor('Red'))
             elif GameControlFunction.color[x] == 'Green':
                 self.canvas.add(Color(0,1,0))
             elif GameControlFunction.color[x] == 'Blue':
@@ -623,6 +625,7 @@ class GameControlFunction(FloatLayout):
                 self.canvas.add(Color(1,1,.5))
             elif GameControlFunction.color[x] == 'Purple':
                 self.canvas.add(Color(.8,0,1))
+            """
             self.canvas.add(Rectangle(size=(50, 49),pos=(10+index*self.offset + index*50,20+self.start)))
             GameControlFunction.block_pos.append([10+index*self.offset + index*50,20+self.start])
             index+=1
