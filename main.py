@@ -286,10 +286,10 @@ class GameTab(Widget):
         # Create GameMap
         sizing = min(Window.size)*0.6
         print self.center ,"CENTER BEFORE CREATE MAP"
-        self.gamemap = GameMap(map_t=[] ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y+100,rows=map_size,cols=map_size,spacing=0)
+        self.gamemap = GameMap(map_t=[] ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y,rows=map_size,cols=map_size,spacing=0)
         self.add_widget(self.gamemap)
         self.gamemap.center_x = self.center_x
-        self.gamemap.center_y = self.center_y + 80
+        self.gamemap.center_y = self.center_y
         print self.gamemap.gridpos
         #self.gamemap.size_hint=(0.1,0.1)
         #self.gamemap.size=(500,500)
@@ -309,7 +309,7 @@ class GameTab(Widget):
         self.add_widget(self.gamecontrol)
         
         # Create ToggleButton
-        self.gamerun = ToggleButton(size=[50,50],pos=[330,100] ,on_press=lambda x: self.toggle(),background_normal='images/remote_play.png',background_down='images/remote_stop.png')
+        self.gamerun = ToggleButton(size=[50,50],pos=[330,70] ,on_press=lambda x: self.toggle(),background_normal='images/remote_play.png',background_down='images/remote_stop.png')
         self.add_widget(self.gamerun)
         #self.gamerun.bind(on_press=self.toggle)
         self.goenable = False
@@ -536,13 +536,13 @@ class GameControlCommand(FloatLayout):
                 index+=1
                 for z in xrange(colorNum+2):
                     if type_button == 'U':
-                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,100+x*50]))
+                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,70+x*50]))
                     elif type_button == 'D':
-                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,100+x*50]))
+                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,70+x*50]))
                     elif type_button == 'R':
-                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,50+x*50]))
+                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,20+x*50]))
                     elif type_button == 'L':
-                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,50+x*50]))
+                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,20+x*50]))
                 if index >= len(data):
                         break
             if index >= len(data):
@@ -608,8 +608,8 @@ class GameControlFunction(FloatLayout):
                 self.canvas.add(Color(1,1,.5))
             elif GameControlFunction.color[x] == 'Purple':
                 self.canvas.add(Color(.8,0,1))
-            self.canvas.add(Rectangle(size=(50, 49),pos=(index*self.offset + index*50,50+self.start)))
-            GameControlFunction.block_pos.append([index*self.offset + index*50,50+self.start])
+            self.canvas.add(Rectangle(size=(50, 49),pos=(10+index*self.offset + index*50,20+self.start)))
+            GameControlFunction.block_pos.append([10+index*self.offset + index*50,20+self.start])
             index+=1
             if index > 3:
                 index = 0

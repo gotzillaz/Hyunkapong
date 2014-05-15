@@ -148,7 +148,7 @@
 
     Button:
         id: ee
-        pos: 330,50
+        pos: 330,20
         size: 50,50
         background_normal: 'images/re.png'
         background_down: 'images/re_c.png'
@@ -176,6 +176,14 @@
 
 <GameScreen>:
     Widget:
+        Widget:
+            size:root.size
+            canvas:
+                Color:
+                    rgb: 0.921875,0.9375,0.94140625
+                Rectangle:
+                    size:self.size
+                    pos:self.pos   
         Image:
             size:root.size
             pos:0,0
