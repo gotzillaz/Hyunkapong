@@ -28,6 +28,7 @@
     size: 10000,10000
     next_s: ac
     re_s: re
+    scr_l: sc
     #canvas:
     #    Color:
     #        rgba: 1,1,0,0.7
@@ -54,6 +55,10 @@
         background_normal: 'images/reset_map.png'
         background_down: 'images/reset_map.png'
         on_press: self.parent.parent.readStage(self.parent.parent.stage_id)
+    Label:
+        id: sc
+        text: ''
+        font_size: 60
 #<GameMap>:
 #    size: 400,400
 #    center_x: self.parent.center_x

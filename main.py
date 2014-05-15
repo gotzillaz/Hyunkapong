@@ -191,6 +191,7 @@ class GameBall(Widget):
 class GamePopup(Widget):
     next_s = ObjectProperty(None)
     re_s = ObjectProperty(None)
+    scr_l = ObjectProperty(None)
 
 class GameTab(Widget):
     stage_id = 0
@@ -236,7 +237,13 @@ class GameTab(Widget):
             self.gamepopup.next_s.center_x = self.center_x - 75
             self.gamepopup.re_s.center = self.center
             self.gamepopup.re_s.center_x = self.center_x + 75
+            self.gamepopup.scr_l.center = self.center
+            self.gamepopup.scr_l.center_y = self.center_y + 125
+            self.gamepopup.scr_l.text = 'You got\n' + str(self.score) + ' point'
+            if self.score > 1:
+                self.gamepopup.scr_l.text+='s'
             print "ENDDING"
+            self.score = 0
             #self.readStage(self.stage_id+1)
 
     def toggle(self):
@@ -272,6 +279,7 @@ class GameTab(Widget):
         o_file.close()
         ######
         self.clear_widgets()
+        self.score = 0
         self.stage_id = num_stage
         num_color = int(file_map[1])
         map_size = int(file_map[0])
