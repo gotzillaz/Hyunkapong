@@ -232,8 +232,9 @@ class GameTab(Widget):
             self.gamepopup = GamePopup(size=Window.size)
             self.add_widget(self.gamepopup)
             self.gamepopup.next_s.center = self.center
-            self.gamepopup.re_s.center_x = self.center_x
-            self.gamepopup.re_s.center_y = self.center_y - 250
+            self.gamepopup.next_s.center_x = self.center_x - 75
+            self.gamepopup.re_s.center = self.center
+            self.gamepopup.re_s.center_x = self.center_x + 75
             print "ENDDING"
             #self.readStage(self.stage_id+1)
 
