@@ -284,7 +284,7 @@ class GameTab(Widget):
         #file_map.close()
         print self.center ,"C_Center"
         # Create GameMap
-        sizing = min(Window.size)*0.6
+        sizing = min(Window.size)*0.8
         print self.center ,"CENTER BEFORE CREATE MAP"
         self.gamemap = GameMap(map_t=[] ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y,rows=map_size,cols=map_size,spacing=0)
         self.add_widget(self.gamemap)
@@ -611,9 +611,9 @@ class GameControlFunction(FloatLayout):
             self.canvas.add(Rectangle(size=(50, 49),pos=(10+index*self.offset + index*50,20+self.start)))
             GameControlFunction.block_pos.append([10+index*self.offset + index*50,20+self.start])
             index+=1
-            if index > 3:
+            if index > 2:
                 index = 0
-                self.start -= 70
+                self.start -= 50
 
 class ReleaseButton(FloatLayout):
     pass
