@@ -9,6 +9,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.core.window import Window
@@ -88,7 +89,7 @@ class GameMap(GridLayout):
 
     def updateGridPos(self):
         for x in self.children:
-            print x.id
+            #print x.id
             pr = int(x.id[1])
             pc = int(x.id[2])
             self.gridpos[pr][pc] = (x.center_x,x.center_y)
@@ -129,7 +130,7 @@ class GameBall(Widget):
 
     def ballAnimation(self,next_grid):
         next_pos = self.parent.gamemap.gridpos[next_grid[0]][next_grid[1]]
-        print "Next_pos" , next_pos
+        #print "Next_pos" , next_pos
         #next_pos = self.parent.gamemap.gridpos[0][1]
         ani = Animation(x=next_pos[0]-self.size[0]/2.0,y=next_pos[1]-self.size[1]/2.0,duration=0.1)
         #self.changeColor()
@@ -159,9 +160,9 @@ class GameBall(Widget):
         #self.canvas.clear()
         #for x in dir(self.canvas):
         #    print x,getattr(self.canvas,x)
-        print self.canvas.children
-        print dir(self.canvas.children[1])
-        print self.canvas.children[1].needs_redraw
+        #print self.canvas.children
+        #print dir(self.canvas.children[1])
+        #print self.canvas.children[1].needs_redraw
         self.canvas.children[3].rgb = GameColor().getColorRGB(color)
         self.ball_color = color
         #self.clear_widgets()
@@ -179,6 +180,10 @@ class GameBall(Widget):
         super(GameBall,self).__init__(**kwargs)
         #Clock.schedule_interval(self.smoothBall,1.0/100000)
 
+class GamePopup(Widget):
+    next_s = ObjectProperty(None)
+    re_s = ObjectProperty(None)
+
 class GameTab(Widget):
     stage_id = 0
     score = 0
@@ -189,6 +194,9 @@ class GameTab(Widget):
     gamescore = ObjectProperty(None)
     stepmethod = ''
     color_direction = {}
+    gamepopup = ObjectProperty(None)
+    gamerun = ObjectProperty(None)
+    haspopup = False
     goenable = False
     
     def updateBallColor(self):
@@ -196,21 +204,35 @@ class GameTab(Widget):
         next_color = self.gamemap.getGridColor(r,c)
         if next_color != 'White':
             self.gameball.changeColor(next_color)
-    
+
+    def closePopup(self):
+        self.haspopup = False
 
     def checkEndGrid(self):
-        if self.gameball.endgrid == self.gameball.ballgrid:
+        if self.gameball.endgrid == self.gameball.ballgrid and self.haspopup == False:
             self.changeStep('')
-            popup = Popup(title='Test popup',
-                content=PopupContent(),
+            self.haspopup = True
+            """
+            btn = Button(text='Next Stage')
+            popup = Popup(title='Mission Accomplish',
+                content=Label(text='HAHAHA'),
                 size_hint=(0.5, 0.5),
-                auto_dismiss=False)
+                )
+            popup.bind(on_dismiss=callback)
             popup.open()
+            """
+            self.gamepopup = GamePopup(size=Window.size)
+            self.add_widget(self.gamepopup)
+            self.gamepopup.next_s.center = self.center
+            self.gamepopup.re_s.center_x = self.center_x
+            self.gamepopup.re_s.center_y = self.center_y - 250
             print "ENDDING"
-            self.readStage(1)
+            #self.readStage(self.stage_id+1)
 
     def toggle(self):
+        print "MEOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
         self.goenable = not self.goenable
+        print self.goenable
         if not self.goenable:
             self.resetStage()
         print "SCORE ",self.score
@@ -219,6 +241,7 @@ class GameTab(Widget):
 
     def resetStage(self):
         self.changeStep('')
+        self.remove_widget(self.gamepopup)
         i,j = 0,0
         for x in self.gamemap.color_table:
             j = 0
@@ -238,6 +261,7 @@ class GameTab(Widget):
         o_file.close()
         ######
         self.clear_widgets()
+        self.stage_id = num_stage
         num_color = int(file_map[1])
         map_size = int(file_map[0])
         color_list = file_map[2].split()
@@ -272,11 +296,20 @@ class GameTab(Widget):
         
         # Create GameControl
         self.gamecontrol = GameControl(color_list=color_list)
+            #self.gamecontrol = GameControlFunction(color_list=color_list)
         self.add_widget(self.gamecontrol)
+        
+        # Create ToggleButton
+        self.gamerun = ToggleButton(text='RUN',size=[100,100],pos=[700,200],on_press=lambda x: self.toggle())
+        self.add_widget(self.gamerun)
+        #self.gamerun.bind(on_press=self.toggle)
+        self.goenable = False
+        self.haspopup = False
+
 
     def changeStep(self, way):
         self.stepmethod = way
-
+    
     def ballControl(self):
         now_grid = [self.gameball.ballgrid[0],self.gameball.ballgrid[1]]
         if self.stepmethod == 'U':
@@ -296,12 +329,15 @@ class GameTab(Widget):
         if now_grid[1]>=self.gamemap.gridsize:
             now_grid[1] = self.gamemap.gridsize-1
         self.changeStep('')
-        print "Compare :",self.gameball.ballgrid,self.gameball.startgrid
+        #print "Compare :",self.gameball.ballgrid,self.gameball.startgrid
         self.gameball.ballAnimation(now_grid)
 
     def pt(self,x):
+        if self.haspopup:
+            return 
         #self.gameball.size = [30,30]
         #self.gameball.
+        """
         print "xx" 
         print "GameTab Center",self.center
         print "GameTab size",self.size
@@ -310,20 +346,20 @@ class GameTab(Widget):
         for x in self.children[1].children:
             print x.center
             #print x.id
+        """
         self.gamemap.updateGridPos()
         tmpc = ['Red','Blue','Green','White']
         tmps = [True,False]
         for x in self.gamemap.children:
             x.changeColor(x.color)
             #x.star = tmps[randint(0,1)]
-            #x.hasStar()
+        """    #x.hasStar()
         print self.gamemap.gridpos
         print self.children[0].center, "zzzz"
         print self.children[0].size,self.children[0]
-        print self.center,self
-        radius = self.gameball.size[0]/2.0
+        print self.center,self"""
         bpos = self.gameball.ballgrid
-        print bpos
+        #print bpos
         tmpst = ['U','D','L','R']
         if self.goenable:
             self.updateBallColor()
@@ -332,7 +368,7 @@ class GameTab(Widget):
             self.checkEndGrid()
         self.ballControl()
         self.score += self.gamemap.updateItem(self.gameball.ballgrid[0],self.gameball.ballgrid[1])
-        self.gamescore.text = str(self.score)
+        #self.gamescore.text = str(self.score)
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()
@@ -385,6 +421,13 @@ class GameControlCommand(FloatLayout):
             self.children[self.i].pos = [touch.x-25,touch.y-25]
 
     def on_touch_up(self, touch):
+        """
+        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        print GameControlFunction.number
+        print GameControlFunction.color
+        print GameControlFunction.push
+        print GameControlFunction.obj_push
+        """
         if self.grep == True:
             ## solve ##
             solve = []
@@ -423,6 +466,8 @@ class GameControlCommand(FloatLayout):
                         if GameControlFunction.push[index] == True:
                             index = solve[1][0]
                     boolean = self.move(self.i,index)
+            #print "BUG PAO WA SASSSSSSSSSSS"
+            #print solve
             ## solve ##
             if boolean:
                 self.children[self.i].pos = self.origin_pos
@@ -462,7 +507,7 @@ class GameControlCommand(FloatLayout):
                 self.move(self.children.index(GameControlFunction.obj_push[i]),run)
             run+=1
 
-    def __init__(self,**kwargs):
+    def __init__(self,colorNum,**kwargs):
         super(GameControlCommand, self).__init__(**kwargs)
         data = ['U','D','L','R']
         index = 0
@@ -470,7 +515,7 @@ class GameControlCommand(FloatLayout):
             for y in xrange(5):
                 type_button = data[index]
                 index+=1
-                for z in xrange(len(GameControlFunction.color)+2):
+                for z in xrange(colorNum+2):
                     if type_button == 'U':
                         self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
                     elif type_button == 'D':
@@ -483,10 +528,16 @@ class GameControlCommand(FloatLayout):
                         break
             if index >= len(data):
                 break
+        self.position = []
         for x in self.children:
             a,b = x.pos
             self.position.append([a,b])
-
+        """
+        print self.children
+        print self.position
+        print len(self.children),len(self.position)
+        print "*******************************************"
+        """
 class GameControlFunction(FloatLayout):
     start = 400
     offset = 2
@@ -504,8 +555,17 @@ class GameControlFunction(FloatLayout):
         GameControlFunction.number = len(color_list)
         GameControlFunction.color = [c for c in color_list]
         GameControlFunction.push = [False]*len(color_list)
-        GameControlFunction.obj_push = self.obj_push*len(color_list)
+        GameControlFunction.obj_push = [0]*len(color_list)
+        """
+        print "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+        print color_list
+        print GameControlFunction.number
+        print GameControlFunction.color
+        print GameControlFunction.push
+        print GameControlFunction.obj_push
+        """
         index = 0
+        GameControlFunction.block_pos = []
         for x in xrange(GameControlFunction.number):
             if GameControlFunction.color[x] == 'Red':
                 self.canvas.add(Color(1,0,0))
@@ -529,8 +589,8 @@ class GameControlFunction(FloatLayout):
                 self.canvas.add(Color(1,1,.5))
             elif GameControlFunction.color[x] == 'Purple':
                 self.canvas.add(Color(.8,0,1))
-            self.canvas.add(Rectangle(size=(50, 50),pos=(50 + index*self.offset + index*50,self.start)))
-            self.block_pos.append([50 + index*self.offset + index*50,self.start])
+            self.canvas.add(Rectangle(size=(50, 49),pos=(50 + index*self.offset + index*50,self.start)))
+            GameControlFunction.block_pos.append([50 + index*self.offset + index*50,self.start])
             index+=1
             if index > 3:
                 index = 0
@@ -541,6 +601,9 @@ class ReleaseButton(FloatLayout):
 
 class GameScreen(Screen):
     pass
+class StartScreen(Screen):
+    def toGameScreen(self):
+        self.parent.current = 'gs'
 
 class GameControl(Widget):
     gamecontrolcommand = ObjectProperty(None)
@@ -550,16 +613,19 @@ class GameControl(Widget):
         super(GameControl, self).__init__(**kwargs)
         self.gamecontrolfunction = GameControlFunction(color_list=color_list)
         self.add_widget(self.gamecontrolfunction)
-        self.gamecontrolcommand = GameControlCommand()
+        self.gamecontrolcommand = GameControlCommand(len(color_list))
         self.add_widget(self.gamecontrolcommand)
 
 class LokiColorApp(App):
     def build(self):
         Config.set('graphics','maxfps',300)
         Config.write()
-        sm = ScreenManager()
-        #sm.switch_to(GameControl(name='gg'))
-        sm.switch_to(GameScreen(name='gg'))
+        sm = ScreenManager(transition=FadeTransition())
+        st = StartScreen(name='st')
+        gs = GameScreen(name='gs')
+        sm.add_widget(st)
+        sm.add_widget(gs)
+        #sm.switch_to(st)
         #Clock.schedule_interval(game.update,1/60.0)
         return sm
 

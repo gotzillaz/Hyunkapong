@@ -14,6 +14,32 @@
             pos: self.pos
             size: self.size
 
+<GamePopup>:
+    size: 10000,10000
+    next_s: ac
+    re_s: re
+    #canvas:
+    #    Color:
+    #        rgba: 1,1,0,0.7
+    #    Rectangle:
+    #        pos: 0,0
+    #        size: self.size
+    Button:
+        size: 1000,1000
+        pos: 0,0
+        background_color: 0,0,0,0.7
+        #enable: False
+        #on_press: self.parent.parent.readStage(self.parent.parent.stage_id+1)
+    Button: 
+        id: ac
+        text: "Next Stage"
+        size: 200,200
+        on_press: self.parent.parent.readStage(self.parent.parent.stage_id+1)
+    Button:
+        id: re
+        text: "Restart"
+        size: 200,200
+        on_press: self.parent.parent.readStage(self.parent.parent.stage_id)
 #<GameMap>:
 #    size: 400,400
 #    center_x: self.parent.center_x
@@ -26,7 +52,7 @@
     pos:0,0
     #gameball: bb
     #gamemap: gg
-    gamescore: lb
+    #gamescore: lb
 
     #GameMap:
     #    id: gg
@@ -38,10 +64,11 @@
     #GameBall:
     #    id: bb
     #    center: self.center
-    Label:
-        id: lb
-        pos: 400,0
-        text: str(self.parent.score)
+    
+    #Label:
+    #    id: lb
+    #    pos: 400,0
+    #    text: str(self.parent.score)
 
     Button:
         size: 150,30
@@ -63,11 +90,11 @@
         pos: 450,570
         text: 'R'
         on_press: self.parent.changeStep('R')
-    ToggleButton:
-        size: 150,30
-        pos: 600,570
-        text: 'Toggle'
-        on_press: self.parent.toggle()
+    #ToggleButton:
+    #    size: 150,30
+    #    pos: 600,570
+    #    text: 'Toggle'
+    #    on_press: self.parent.toggle()
         
     Button:
         size: 10,30
@@ -135,7 +162,7 @@
     orientation: 'vertical'
     
     Label:
-        text: "Hello World"
+        text: "Awesome"
 
     BoxLayout:
         orientation: 'horizontal'
@@ -143,7 +170,8 @@
         Button:
             text: "CC"
         Button:
-            text: "CC"
+            text: "Next Stage"
+            on_press: root.parent.readStage(self.parent.parent.parent.stage_id+1)
         Button:
             text: "CC"
 
@@ -152,3 +180,15 @@
     #    id: control
     GameTab:
         id: tab
+
+<StartScreen>
+    Button:
+        text: 'Play'
+        size: 10,10
+        pos: 300,200
+        on_press: self.parent.toGameScreen()
+    Button:
+        text: 'Exit'
+        size: 10,10
+        pos: 300,500
+        on_press: exit()
