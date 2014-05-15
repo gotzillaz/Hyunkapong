@@ -2,17 +2,27 @@
 
 <GameBall>:
     size: 40,40
-    canvas: 
-        Color:
-            rgba: 0,0,0,1
-        Ellipse:
-            pos: self.pos
-            size: 50,50
+    img: im
+    Image:
+        id: im
+        source: 'images/robot_down.png'
+        pos: self.parent.pos
+        size: self.parent.size
+
+<GamePlate>:
+    size: 20,20
+    img: im
+    canvas:
         Color:
             rgba: 1,1,1,1
-        Ellipse:
+        Rectangle:
             pos: self.pos
             size: self.size
+    Image:
+        id: im
+        source: 'images/flag_2.png'
+        pos: self.parent.pos
+        size: self.parent.size
 
 <GamePopup>:
     size: 10000,10000
@@ -138,25 +148,14 @@
 
     Button:
         id: ee
-        pos: 500,450
+        pos: 330,50
         size: 50,50
         background_normal: 'images/re.png'
         background_down: 'images/re_c.png'
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
-        size_hint: None,None
-        on_press: self.parent.gamecontrolcommand.releaseButton()
-
-    Button:
-        id: ee
-        pos: 500,300
-        size: 100,50
-        background_normal: 'images/submit.png'
-        background_down: 'images/submit_x.png'
         #center_x: self.parent.center_x
         #center_y: self.parent.center_y
         size_hint: None,None
-        on_press: self.parent.gamecontrolcommand.submitButton()
+        on_press: self.parent.gamecontrolcommand.releaseButton()
 
 <PopupContent>:
     orientation: 'vertical'
@@ -176,7 +175,7 @@
             text: "CC"
 
 <GameScreen>:
-    #GameControl:
+    #GameControL:
     #    id: control
     GameTab:
         id: tab

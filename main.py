@@ -11,6 +11,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.popup import Popup
+from kivy.uix.image import Image
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import Config
@@ -41,17 +42,21 @@ class GamePlate(Widget):
     color = 'White'
     text = ''
     star = False
+    img = ObjectProperty(None)
 
     def hasStar(self):
         if self.star:
             self.canvas.add(Color(0,0,0))
             self.canvas.add(Ellipse(size=[10,10],pos=self.pos))
 
+    def setFlag(self):
+        self.img.source = 'images/flag_2.png'
+
     def changeColor(self, mycolor):
         self.color = mycolor
-        self.canvas.clear()
-        self.canvas.add(GameColor().getColor(mycolor))
-        self.canvas.add(Rectangle(size=self.size,pos=self.pos))
+        self.canvas.children[0].rgb = GameColor().getColorRGB(mycolor)
+        #self.canvas.add(GameColor().getColor(mycolor))
+        #self.canvas.add(Rectangle(size=self.size,pos=self.pos))
 
     def getColor(self):
         return self.color
@@ -125,6 +130,7 @@ class GameBall(Widget):
     endgrid = [1,1]
     ball_color = 'White'
     distance = 1.0
+    img = ObjectProperty(None)
 
     #self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius
 
@@ -163,7 +169,7 @@ class GameBall(Widget):
         #print self.canvas.children
         #print dir(self.canvas.children[1])
         #print self.canvas.children[1].needs_redraw
-        self.canvas.children[3].rgb = GameColor().getColorRGB(color)
+        #self.canvas.children[3].rgb = GameColor().getColorRGB(color)
         self.ball_color = color
         #self.clear_widgets()
         #my_canvas = Canvas()
@@ -178,6 +184,8 @@ class GameBall(Widget):
 
     def __init__(self,**kwargs):
         super(GameBall,self).__init__(**kwargs)
+        #self.img = Image(source='images/robot_down.png')
+        #self.add_widget(self.img)
         #Clock.schedule_interval(self.smoothBall,1.0/100000)
 
 class GamePopup(Widget):
@@ -252,6 +260,7 @@ class GameTab(Widget):
             i+=1
         self.score = 0
         print "StartGrid", self.gameball.startgrid
+        self.gameball.img.source = 'images/robot_down.png'
         self.gameball.changeGrid(self.gameball.startgrid[0],self.gameball.startgrid[1])
         
     def readStage(self,num_stage):
@@ -300,7 +309,7 @@ class GameTab(Widget):
         self.add_widget(self.gamecontrol)
         
         # Create ToggleButton
-        self.gamerun = ToggleButton(text='RUN',size=[100,100],pos=[700,200],on_press=lambda x: self.toggle())
+        self.gamerun = ToggleButton(size=[50,50],pos=[330,100] ,on_press=lambda x: self.toggle(),background_normal='images/remote_play.png',background_down='images/remote_stop.png')
         self.add_widget(self.gamerun)
         #self.gamerun.bind(on_press=self.toggle)
         self.goenable = False
@@ -314,12 +323,16 @@ class GameTab(Widget):
         now_grid = [self.gameball.ballgrid[0],self.gameball.ballgrid[1]]
         if self.stepmethod == 'U':
             now_grid[0] -=1
+            self.gameball.img.source = 'images/robot_up.png'
         elif self.stepmethod == 'D':
             now_grid[0] +=1
+            self.gameball.img.source = 'images/robot_down.png'
         elif self.stepmethod == 'L':
             now_grid[1] -=1
+            self.gameball.img.source = 'images/robot_left.png'
         elif self.stepmethod == 'R':
             now_grid[1] +=1
+            self.gameball.img.source = 'images/robot_right.png'
         if now_grid[0]<0:
             now_grid[0] = 0
         if now_grid[0]>=self.gamemap.gridsize:
@@ -352,6 +365,12 @@ class GameTab(Widget):
         tmps = [True,False]
         for x in self.gamemap.children:
             x.changeColor(x.color)
+            if self.gameball.endgrid == map(int,[x.id[1],x.id[2]]):
+                x.setFlag()
+                print "YYYYYYYYYY"
+                print self.gameball.endgrid
+            else:
+                x.clear_widgets()
             #x.star = tmps[randint(0,1)]
         """    #x.hasStar()
         print self.gamemap.gridpos
@@ -517,13 +536,13 @@ class GameControlCommand(FloatLayout):
                 index+=1
                 for z in xrange(colorNum+2):
                     if type_button == 'U':
-                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,100+x*50]))
                     elif type_button == 'D':
-                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,100+x*50]))
                     elif type_button == 'R':
-                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,50+x*50]))
                     elif type_button == 'L':
-                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[400+y*50,self.offset+x*50]))
+                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,50+x*50]))
                 if index >= len(data):
                         break
             if index >= len(data):
@@ -539,7 +558,7 @@ class GameControlCommand(FloatLayout):
         print "*******************************************"
         """
 class GameControlFunction(FloatLayout):
-    start = 400
+    start = 50
     offset = 2
     push = [False]
     obj_push = [0]
@@ -589,8 +608,8 @@ class GameControlFunction(FloatLayout):
                 self.canvas.add(Color(1,1,.5))
             elif GameControlFunction.color[x] == 'Purple':
                 self.canvas.add(Color(.8,0,1))
-            self.canvas.add(Rectangle(size=(50, 49),pos=(50 + index*self.offset + index*50,self.start)))
-            GameControlFunction.block_pos.append([50 + index*self.offset + index*50,self.start])
+            self.canvas.add(Rectangle(size=(50, 49),pos=(index*self.offset + index*50,50+self.start)))
+            GameControlFunction.block_pos.append([index*self.offset + index*50,50+self.start])
             index+=1
             if index > 3:
                 index = 0
@@ -618,7 +637,9 @@ class GameControl(Widget):
 
 class LokiColorApp(App):
     def build(self):
-        Config.set('graphics','maxfps',300)
+        Config.set('graphics','maxfps','300')
+        Config.set('graphics','width','384')
+        Config.set('graphics','height','640')
         Config.write()
         sm = ScreenManager(transition=FadeTransition())
         st = StartScreen(name='st')
