@@ -120,11 +120,12 @@ class GameBall(Widget):
         self.ballgrid[0] = x
         self.ballgrid[1] = y
 
-    def setFirstStat(self,start,end):
+    def setFirstStat(self,start,end,color):
         self.ballgrid[0] = self.oldgrid[0] = start[0]
         self.ballgrid[1] = self.oldgrid[1] = start[1]
         self.endgrid[0] = end[0]
         self.endgrid[1] = end[1]
+        self.changeColor(color)
 
     def changePos(self,x,y):
         self.x = x
@@ -137,7 +138,8 @@ class GameBall(Widget):
         print self.canvas.children
         print dir(self.canvas.children[1])
         print self.canvas.children[1].needs_redraw
-        self.canvas.children[0].rgb = GameColor().getColorRGB(color)
+        self.canvas.children[3].rgb = GameColor().getColorRGB(color)
+        self.ball_color = color
         #self.clear_widgets()
         #my_canvas = Canvas()
         #my_canvas.add(GameColor().getColor('Green'))
@@ -180,6 +182,8 @@ class GameTab(Widget):
 
     def toggle(self):
         self.goenable = not self.goenable
+        self.color_direction['Red'] = 'D'
+        self.color_direction['Blue'] = 'R'
 
     def readStage(self):
         # Open stage file
@@ -190,7 +194,7 @@ class GameTab(Widget):
         self.color_direction = { c:'' for c in color_list}
         #print self.color_direction
         #color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
-        color_table = [['Blue','White','White','White','White','Blue'],['White','White','Green','Red','White','White'],['Red','White','White','White','Red','White','Blue'],['White','White','Red','White','White','Green'],['Red','White','Blue','White','White','White'],['White','White','Green','Red','White','White']]
+        color_table = [['Blue','White','White','White','White','Blue'],['White','Red','Green','Red','White','White'],['Red','White','White','White','Red','White','Blue'],['White','White','Red','White','White','Green'],['Red','Blue','White','White','White','White'],['White','White','Green','Red','White','White']]
         map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         start_pos = [1,1]
         end_pos = [4,4]
@@ -206,7 +210,8 @@ class GameTab(Widget):
         # Create GameBall
         self.gameball = GameBall(size=[50,50])
         self.add_widget(self.gameball)
-        self.gameball.setFirstStat(start_pos, end_pos)
+        self.gameball.setFirstStat(start_pos, end_pos,color_table[start_pos[0]][start_pos[1]])
+        
 
     def changeStep(self, way):
         self.stepmethod = way
@@ -260,11 +265,11 @@ class GameTab(Widget):
         print bpos
         tmpst = ['U','D','L','R']
         if self.goenable:
-            self.changeStep(tmpst[randint(0,3)])
-        if self.stepmethod != '':
             self.updateBallColor()
-            self.ballControl()
+            self.changeStep(self.color_direction[self.gameball.ball_color])
+        if self.stepmethod != '':
             self.checkEndGrid()
+        self.ballControl()
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()

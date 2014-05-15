@@ -1,8 +1,13 @@
 #:kivy 1.8.0
 
 <GameBall>:
-    size: 50,50
+    size: 40,40
     canvas: 
+        Color:
+            rgba: 0,0,0,1
+        Ellipse:
+            pos: self.pos
+            size: 50,50
         Color:
             rgba: 1,1,1,1
         Ellipse:
