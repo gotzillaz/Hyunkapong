@@ -5,10 +5,11 @@ Robot puzzle game with Kivy Framework
 
 Installation
 ==========
-- run from terminal “kivy main.py” (on mac), “python main.py” (on linux).
-- if you use windows, shut it up. you have to open linux or mac only and back to 1.
-- if you don’t have ‘kivy’, install it.
+- run from terminal “kivy main.py” (on Mac), “python main.py” (on Linux).
+- if you use Windows, please run with "run.bat". 
+- if you don’t have ‘kivy framework’, install it (version >= 1.8.0).
 - please run at 640*384
+- We'll release to the other OS later
 
 How to play
 ==========
