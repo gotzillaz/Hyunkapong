@@ -120,6 +120,7 @@ class GameMap(GridLayout):
 class GameBall(Widget):
     ballgrid = [0,0]
     oldgrid = [0,0]
+    startgrid = [0,0]
     endgrid = [1,1]
     ball_color = 'White'
     distance = 1.0
@@ -144,6 +145,8 @@ class GameBall(Widget):
     def setFirstStat(self,start,end,color):
         self.ballgrid[0] = self.oldgrid[0] = start[0]
         self.ballgrid[1] = self.oldgrid[1] = start[1]
+        self.startgrid[0] = start[0]
+        self.startgrid[1] = start[1]
         self.endgrid[0] = end[0]
         self.endgrid[1] = end[1]
         self.changeColor(color)
@@ -179,6 +182,7 @@ class GameBall(Widget):
 class GameTab(Widget):
     stage_id = 0
     score = 0
+    starrequire = []
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
     gamecontrol = ObjectProperty(None)
@@ -203,31 +207,53 @@ class GameTab(Widget):
                 auto_dismiss=False)
             popup.open()
             print "ENDDING"
-            self.readStage()
+            self.readStage(1)
 
     def toggle(self):
         self.goenable = not self.goenable
+        if not self.goenable:
+            self.resetStage()
+        print "SCORE ",self.score
         self.gamecontrol.gamecontrolcommand.submitButton()
         self.color_direction = self.gamecontrol.gamecontrolcommand.command_hash
+
+    def resetStage(self):
+        self.changeStep('')
+        i,j = 0,0
+        for x in self.gamemap.color_table:
+            j = 0
+            for y in x:
+                if y != 'White':
+                    self.gamemap.object_map[i][j] = True
+                j+=1
+            i+=1
+        self.score = 0
+        print "StartGrid", self.gameball.startgrid
+        self.gameball.changeGrid(self.gameball.startgrid[0],self.gameball.startgrid[1])
         
-    def readStage(self):
+    def readStage(self,num_stage):
         # Open stage file
+        o_file = open('maps/'+str(num_stage)+'.in')
+        file_map = map(lambda x: x.strip(),o_file.readlines())
+        o_file.close()
+        ######
         self.clear_widgets()
-        num_color = 3
-        map_size = 6
-        color_list = ['Red','Green','Blue']
+        num_color = int(file_map[1])
+        map_size = int(file_map[0])
+        color_list = file_map[2].split()
         self.color_direction = { c:'' for c in color_list}
-        #print self.color_direction
-        #color_table = [['Blue','White','White','White','White'],['White','White','Green','White','White'],['Red','White','White','White','Red','White'],['White','White','Red','White','White'],['Red','White','White','White','White']]
-        color_table = [['Blue','White','White','White','White','Blue'],['White','Red','Green','Red','White','White'],['Red','White','White','White','Red','White','Blue'],['White','White','Red','White','White','Green'],['Red','Blue','White','White','White','White'],['White','White','Green','Red','White','White']]
-        map_table = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
-        start_pos = [1,1]
-        end_pos = [4,4]
+        color_table = []
+        for ct in file_map[3:3+map_size]:
+            color_table.append(ct.split())
+        start_pos = map(int,file_map[3+map_size].split())
+        end_pos = map(int,file_map[3+map_size+1].split())
+        self.starrequire = map(int,file_map[3+map_size+2].split())
+        #file_map.close()
         print self.center ,"C_Center"
         # Create GameMap
         sizing = min(Window.size)*0.6
         print self.center ,"CENTER BEFORE CREATE MAP"
-        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y+100,rows=map_size,cols=map_size,spacing=0)
+        self.gamemap = GameMap(map_t=[] ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y+100,rows=map_size,cols=map_size,spacing=0)
         self.add_widget(self.gamemap)
         self.gamemap.center_x = self.center_x
         self.gamemap.center_y = self.center_y + 80
@@ -270,7 +296,7 @@ class GameTab(Widget):
         if now_grid[1]>=self.gamemap.gridsize:
             now_grid[1] = self.gamemap.gridsize-1
         self.changeStep('')
-        print "Compare :",now_grid,self.gameball.ballgrid
+        print "Compare :",self.gameball.ballgrid,self.gameball.startgrid
         self.gameball.ballAnimation(now_grid)
 
     def pt(self,x):
@@ -320,7 +346,7 @@ class GameTab(Widget):
         self.size = Window.size
         print self.size,"GAMETAB WINDOW SIZE"
         print self.center,"GAMETAB CENTER INIT"
-        self.readStage()
+        self.readStage(1)
         Clock.schedule_interval(self.pt,0.5)
 
 class GameControlCommand(FloatLayout):
