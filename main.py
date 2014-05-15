@@ -196,6 +196,7 @@ class GameTab(Widget):
     stage_id = 0
     score = 0
     starrequire = []
+    stagelabel = ObjectProperty(None)
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
     gamecontrol = ObjectProperty(None)
@@ -316,6 +317,11 @@ class GameTab(Widget):
         self.goenable = False
         self.haspopup = False
 
+        # Create Label
+        self.stagelabel = Label(text='Stage'+str(self.stage_id),font_size=75)
+        self.add_widget(self.stagelabel)
+        self.stagelabel.top = self.top
+        self.stagelabel.center_x = self.center_x
 
     def changeStep(self, way):
         self.stepmethod = way
