@@ -19,4 +19,5 @@ How to play
 - The robot will change its color as same as the color of the ground when it walk through the battery(color area). 
 - Get more battery for more score !!!
 - please enjoy with your lovely robot!
+- Now we have 25 stages and it'll be more soon.
 

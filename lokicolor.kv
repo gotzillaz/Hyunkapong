@@ -47,7 +47,7 @@
         size: 100,100
         background_normal: 'images/next_map.png'
         background_down: 'images/next_map.png'
-        on_press: self.parent.parent.readStage(self.parent.parent.stage_id+1)
+        on_press: self.parent.parent.readStage((self.parent.parent.stage_id%25)+1)
     Button:
         id: re
         text: "Restart"
