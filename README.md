@@ -15,6 +15,7 @@ How to play
 - Click “Play” to start the game.
 - The main character is a robot. You have to move the robot to the target(flag) by command it into the left box.
 - The robot has it own color and it will walk by color functions. 
-- The robot will change its color as same as the color of the ground when it walk through the battery. 
+- The robot will change its color as same as the color of the ground when it walk through the battery(color area). 
+- Get more battery for more score !!!
 - please enjoy with your lovely robot!
 
