@@ -181,11 +181,24 @@
         id: tab
 
 <StartScreen>
-    Button:
-        text: 'Play'
-        size: 10,10
-        pos: 300,200
-        on_press: self.parent.toGameScreen()
+    Widget:
+        Image:
+            size: root.size
+            pos: 0,0
+            source: 'images/screen_background.png'
+
+        Image:
+            size: root.size
+            pos: 0,200
+            source: 'images/logo.png'
+            
+        Button:
+            size: 300,300
+            background_normal: 'images/screen_play.png'
+            background_down: 'images/screen_play.png'
+            center: root.center
+            center_y: root.center_y - 50 
+            on_press: self.parent.parent.toGameScreen()
     #Button:
     #    text: 'Exit'
     #    size: 10,10
