@@ -8,6 +8,7 @@ Installation
 - run from terminal “kivy main.py” (on mac), “python main.py” (on linux).
 - if you use windows, shut it up. you have to open linux or mac only and back to 1.
 - if you don’t have ‘kivy’, install it.
+- please run at 640*384
 
 How to play
 ==========
