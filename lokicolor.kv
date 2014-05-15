@@ -40,75 +40,78 @@
 
     Button:
         size: 150,30
-        pos: 0,0
+        pos: 0,570
         text: 'U'
         on_press: self.parent.changeStep('U')
     Button:
         size: 150,30
-        pos: 150,0
+        pos: 150,570
         text: 'D'
         on_press: self.parent.changeStep('D')
     Button:
         size: 150,30
-        pos: 300,0
+        pos: 300,570
         text: 'L'
         on_press: self.parent.changeStep('L')
     Button:
         size: 150,30
-        pos: 450,0
+        pos: 450,570
         text: 'R'
         on_press: self.parent.changeStep('R')
     Button:
         size: 150,30
-        pos: 600,0
+        pos: 600,570
         text: 'Toggle'
         on_press: self.parent.toggle()
         
     Button:
         size: 10,30
-        pos:770,0
+        pos:770,570
         text: 'GG'
         on_press: self.parent.readStage()
 
     Button:
         size: 10,30
-        pos:790,0
+        pos:790,570
         text: 'CC'
         on_press: self.parent.gameball.changeColor()
 
+    #GameControl:
+    #    pos:0,0
+
 <GameControlCommand>:
     size: 500,500
-    center_x: self.parent.center_x
-    center_y: self.parent.center_y
+    center: 100,100
     rows: 6
     cols: 6
     spacing: 0
 
 <GameControl>:
-    gamecontrolcommand: cc
-    gamecontrolfunction: dd
+    #gamecontrolcommand: cc
+    #gamecontrolfunction: dd
     releasebutton: ee
+    pos: 0,0
 
-    GameControlFunction: 
-        id: dd
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
-        size_hint: None,None
-        
-    GameControlCommand:
-        id: cc
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
-        size_hint: None,None
+    #GameControlFunction: 
+    #    id: dd
+    #    center_x: self.parent.center_x
+    #    center_y: self.parent.center_y
+    #    size_hint: None,None
+    #    
+    #GameControlCommand:
+    #    id: cc
+    #    center_x: self.parent.center_x
+    #    center_y: self.parent.center_y
+    #    size_hint: None,None
 
     Button:
         id: ee
         pos: 500,450
         size: 50,50
-        background_normal: 're.png'
-        background_down: 're_c.png'
-        #center_x: self.parent.center_x
-        #center_y: self.parent.center_y
+        background_normal: 'images/re.png'
+        background_down: 'images/re_c.png'
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
         size_hint: None,None
         on_press: self.parent.gamecontrolcommand.releaseButton()
 
@@ -116,12 +119,28 @@
         id: ee
         pos: 500,300
         size: 100,50
-        background_normal: 'submit.png'
-        background_down: 'submit_x.png'
+        background_normal: 'images/submit.png'
+        background_down: 'images/submit_x.png'
         #center_x: self.parent.center_x
         #center_y: self.parent.center_y
         size_hint: None,None
         on_press: self.parent.gamecontrolcommand.submitButton()
+
+<PopupContent>:
+    orientation: 'vertical'
+    
+    Label:
+        text: "Hello World"
+
+    BoxLayout:
+        orientation: 'horizontal'
+        
+        Button:
+            text: "CC"
+        Button:
+            text: "CC"
+        Button:
+            text: "CC"
 
 <GameScreen>:
     #GameControl:

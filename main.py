@@ -6,6 +6,7 @@ from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition , SlideTransition , WipeTransition , ShaderTransition, SwapTransition
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
@@ -21,6 +22,9 @@ from sys import exit
 
 
 class LokiColorG(Widget):
+    pass
+
+class PopupContent(BoxLayout):
     pass
 
 class GameColor():
@@ -159,6 +163,7 @@ class GameTab(Widget):
     stage_id = 0
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
+    gamecontrol = ObjectProperty(None)
     stepmethod = ''
     color_direction = {}
     goenable = False
@@ -174,17 +179,18 @@ class GameTab(Widget):
         if self.gameball.endgrid == self.gameball.ballgrid:
             self.changeStep('')
             popup = Popup(title='Test popup',
-                content=Label(text='Hello world'),
-                size_hint=(0.5, 0.5))
+                content=PopupContent(),
+                size_hint=(0.5, 0.5),
+                auto_dismiss=False)
             popup.open()
             print "ENDDING"
             self.readStage()
 
     def toggle(self):
         self.goenable = not self.goenable
-        self.color_direction['Red'] = 'D'
-        self.color_direction['Blue'] = 'R'
-
+        self.gamecontrol.gamecontrolcommand.submitButton()
+        self.color_direction = self.gamecontrol.gamecontrolcommand.command_hash
+        
     def readStage(self):
         # Open stage file
         self.clear_widgets()
@@ -201,17 +207,27 @@ class GameTab(Widget):
         print self.center ,"C_Center"
         # Create GameMap
         sizing = min(Window.size)*0.6
-        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center=self.center,rows=map_size,cols=map_size,spacing=0)
-        self.gamemap.bind(size=(min(Window.size)/2,min(Window.size)/2))
+        print self.center ,"CENTER BEFORE CREATE MAP"
+        self.gamemap = GameMap(map_t=map_table ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y+100,rows=map_size,cols=map_size,spacing=0)
         self.add_widget(self.gamemap)
-        self.gamemap.size_hint=(0.1,0.1)
+        self.gamemap.center_x = self.center_x
+        self.gamemap.center_y = self.center_y + 80
+        print self.gamemap.gridpos
+        #self.gamemap.size_hint=(0.1,0.1)
         #self.gamemap.size=(500,500)
         print self.gamemap.size,self.gamemap.size_hint,"GAMEMAP SIZE"
+        print self.gamemap.center ,"GAMEMAP CENTER"
         # Create GameBall
-        self.gameball = GameBall(size=[50,50])
+        self.gameball = GameBall(size=[50,50],pos=[500,100])
         self.add_widget(self.gameball)
         self.gameball.setFirstStat(start_pos, end_pos,color_table[start_pos[0]][start_pos[1]])
+        st_x,st_y = self.gamemap.gridpos[1][1]
+        self.gameball.pos = (st_x - self.gameball.size[0]/2.0,st_y-self.gameball.size[1]/2.0) 
+        print self.gameball.pos , "GAMEBALL POS INIT"
         
+        # Create GameControl
+        self.gamecontrol = GameControl(color_list=color_list)
+        self.add_widget(self.gamecontrol)
 
     def changeStep(self, way):
         self.stepmethod = way
@@ -244,7 +260,7 @@ class GameTab(Widget):
         print "xx" 
         print "GameTab Center",self.center
         print "GameTab size",self.size
-        self.gamemap.center = self.center
+        #self.gamemap.center = self.center
         print self.children
         for x in self.children[1].children:
             print x.center
@@ -281,6 +297,8 @@ class GameTab(Widget):
         super(GameTab,self).__init__(**kwargs)
         self.pos = [0,0]
         self.size = Window.size
+        print self.size,"GAMETAB WINDOW SIZE"
+        print self.center,"GAMETAB CENTER INIT"
         self.readStage()
         Clock.schedule_interval(self.pt,0.5)
 
@@ -290,15 +308,16 @@ class GameControlCommand(FloatLayout):
     position = []
     grep = False
     i = 0
+    command_hash = {}
+
     def submitButton(self):
-        submit = {}
         tmp = GameControlFunction.color
         for i in xrange(len(GameControlFunction.obj_push)):
             if GameControlFunction.obj_push[i] == 0:
-                submit[tmp[i]] = ''
+                self.command_hash[tmp[i]] = ''
             else:
-                submit[tmp[i]] = GameControlFunction.obj_push[i].id
-        print submit
+                self.command_hash[tmp[i]] = GameControlFunction.obj_push[i].id
+
     def releaseButton(self):
         for x in GameControlFunction.obj_push:
             if x !=0:
@@ -430,15 +449,15 @@ class GameControlFunction(FloatLayout):
     color = []
     number = 0
 
-    def __init__(self,**kwargs):
+    def __init__(self,color_list,**kwargs):
         super(GameControlFunction, self).__init__(**kwargs)
-        f = open("input.txt")
-        self.color = f.readlines()[0].split(' ')
-        f.close()
-        GameControlFunction.number = int(self.color[0])
-        GameControlFunction.color = self.color[1:]
-        GameControlFunction.push = [False]*self.number
-        GameControlFunction.obj_push = self.obj_push*self.number
+        #f = open("input.txt")
+        #self.color = f.readlines()[0].split(' ')
+        #f.close()
+        GameControlFunction.number = len(color_list)
+        GameControlFunction.color = [c for c in color_list]
+        GameControlFunction.push = [False]*len(color_list)
+        GameControlFunction.obj_push = self.obj_push*len(color_list)
         index = 0
         for x in xrange(GameControlFunction.number):
             if GameControlFunction.color[x] == 'Red':
@@ -466,7 +485,7 @@ class GameControlFunction(FloatLayout):
             self.canvas.add(Rectangle(size=(50, 50),pos=(50 + index*self.offset + index*50,self.start)))
             self.block_pos.append([50 + index*self.offset + index*50,self.start])
             index+=1
-            if index > 5:
+            if index > 3:
                 index = 0
                 self.start -= 70
 
@@ -476,8 +495,16 @@ class ReleaseButton(FloatLayout):
 class GameScreen(Screen):
     pass
 
-class GameControl(Screen):
-    pass
+class GameControl(Widget):
+    gamecontrolcommand = ObjectProperty(None)
+    gamecontrolfunction = ObjectProperty(None)
+    
+    def __init__(self,color_list,**kwargs):
+        super(GameControl, self).__init__(**kwargs)
+        self.gamecontrolfunction = GameControlFunction(color_list=color_list)
+        self.add_widget(self.gamecontrolfunction)
+        self.gamecontrolcommand = GameControlCommand()
+        self.add_widget(self.gamecontrolcommand)
 
 class LokiColorApp(App):
     def build(self):
