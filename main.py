@@ -65,11 +65,21 @@ class GameMap(GridLayout):
     gridpos = [[]]
     color_table = [[]]
     map_table = [[]]
+    object_map = [[]]
     
     def readMap(self,map_table,color_table,size):
         self.gridsize = size
         self.map_table = [[x for x in y] for y in map_table]
         self.color_table = [[x for x in y] for y in color_table]
+        self.object_map = []
+        for x in color_table:
+            tmp = []
+            for y in x:
+                if y != 'White':
+                    tmp.append(True)
+                else:
+                    tmp.append(False)
+            self.object_map.append(tmp)
 
     def getGridColor(self,x,y):
         for g in self.children:
@@ -85,6 +95,13 @@ class GameMap(GridLayout):
 
     def createGridPos(self, num):
         self.gridpos = [[(0,0) for x in xrange(num)] for y in xrange(num)]
+
+    def updateItem(self, x, y):
+        if self.object_map[x][y]:
+            self.object_map[x][y] = False
+            return 1
+        else:
+            return 0
 
     def __init__(self,map_t,color_t,si,**kwargs):
         super(GameMap, self).__init__(**kwargs)
@@ -161,9 +178,11 @@ class GameBall(Widget):
 
 class GameTab(Widget):
     stage_id = 0
+    score = 0
     gameball = ObjectProperty(None)
     gamemap = ObjectProperty(None)
     gamecontrol = ObjectProperty(None)
+    gamescore = ObjectProperty(None)
     stepmethod = ''
     color_direction = {}
     goenable = False
@@ -286,6 +305,8 @@ class GameTab(Widget):
         if self.stepmethod != '':
             self.checkEndGrid()
         self.ballControl()
+        self.score += self.gamemap.updateItem(self.gameball.ballgrid[0],self.gameball.ballgrid[1])
+        self.gamescore.text = str(self.score)
         #self.gameball.changePos(self.children[1].children[bpos[0]].center_x-radius,self.children[1].children[bpos[1]].center_y-radius)
         #self.gameball.changePos(self.gamemap.gridpos[bpos[0]][bpos[1]][0]-radius,self.gamemap.gridpos[bpos[0]][bpos[1]][1]-radius)
         #self.gameball.changeColor()

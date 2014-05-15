@@ -26,6 +26,7 @@
     pos:0,0
     #gameball: bb
     #gamemap: gg
+    gamescore: lb
 
     #GameMap:
     #    id: gg
@@ -37,6 +38,10 @@
     #GameBall:
     #    id: bb
     #    center: self.center
+    Label:
+        id: lb
+        pos: 400,0
+        text: str(self.parent.score)
 
     Button:
         size: 150,30
