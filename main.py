@@ -43,6 +43,7 @@ class GamePlate(Widget):
     text = ''
     star = False
     img = ObjectProperty(None)
+    pos = [0, 0]
 
     def hasStar(self):
         if self.star:
@@ -61,8 +62,12 @@ class GamePlate(Widget):
     def getColor(self):
         return self.color
 
-    def __init__(self,color,**kwargs):
-        super(GamePlate, self).__init__(**kwargs)
+    def __init__(self, color, **kwargs):
+        print(kwargs)
+        super(GamePlate, self).__init__()
+        self.id = kwargs['id']
+        self.size = kwargs['size']
+        self.text = kwargs['text']
         self.color = color
         self.changeColor(self.color)
 
@@ -100,7 +105,7 @@ class GameMap(GridLayout):
             self.gridpos[pr][pc] = (x.center_x,x.center_y)
 
     def createGridPos(self, num):
-        self.gridpos = [[(0,0) for x in xrange(num)] for y in xrange(num)]
+        self.gridpos = [[(0,0) for x in range(num)] for y in range(num)]
 
     def updateItem(self, x, y):
         if self.object_map[x][y]:
@@ -112,16 +117,18 @@ class GameMap(GridLayout):
     def __init__(self,map_t,color_t,si,**kwargs):
         super(GameMap, self).__init__(**kwargs)
         self.readMap(map_t,color_t,si)
-        for x in xrange(self.gridsize):
-            for y in xrange(self.gridsize):
-                self.add_widget(GamePlate(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y),color=self.color_table[x][y]))
+        for x in range(self.gridsize):
+            for y in range(self.gridsize):
+                print('A', self.color_table[x][y])
+                self.add_widget(GamePlate(id='m'+str(x)+str(y), size=[100,100], text=str(x)+' '+str(y), color=self.color_table[x][y]))
+                #self.add_widget(GamePlate(id='m'+str(x)+str(y), size=[100,100], text=str(x)+' '+str(y), color=self.color_table[x][y]))
                 #self.add_widget(Button(id='m'+str(x)+str(y),size=[100,100],text=str(x)+' '+str(y)))
         for x in self.children:
-            print x.pos,x.parent.pos,x.text,x.center_x,x.center_y
-        print self.pos,self.center_x,self.center_y
+            print(x.pos,x.parent.pos,x.text,x.center_x,x.center_y)
+        print(self.pos,self.center_x,self.center_y)
         self.createGridPos(self.gridsize)
         self.updateGridPos()
-        print self.gridpos
+        print(self.gridpos)
     
 class GameBall(Widget):
     ballgrid = [0,0]
@@ -242,17 +249,17 @@ class GameTab(Widget):
             self.gamepopup.scr_l.text = 'You got\n' + str(self.score) + ' point'
             if self.score > 1:
                 self.gamepopup.scr_l.text+='s'
-            print "ENDDING"
+            print("ENDDING")
             self.score = 0
             #self.readStage(self.stage_id+1)
 
     def toggle(self):
-        print "MEOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        print("MEOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
         self.goenable = not self.goenable
-        print self.goenable
+        print(self.goenable)
         if not self.goenable:
             self.resetStage()
-        print "SCORE ",self.score
+        print("SCORE ", self.score)
         self.gamecontrol.gamecontrolcommand.submitButton()
         self.color_direction = self.gamecontrol.gamecontrolcommand.command_hash
 
@@ -268,14 +275,14 @@ class GameTab(Widget):
                 j+=1
             i+=1
         self.score = 0
-        print "StartGrid", self.gameball.startgrid
+        print("StartGrid", self.gameball.startgrid)
         self.gameball.img.source = 'images/robot_down.png'
         self.gameball.changeGrid(self.gameball.startgrid[0],self.gameball.startgrid[1])
         
     def readStage(self,num_stage):
         # Open stage file
         o_file = open('maps/'+str(num_stage)+'.in')
-        file_map = map(lambda x: x.strip(),o_file.readlines())
+        file_map = list(map(lambda x: x.strip(),o_file.readlines()))
         o_file.close()
         ######
         self.clear_widgets()
@@ -288,30 +295,30 @@ class GameTab(Widget):
         color_table = []
         for ct in file_map[3:3+map_size]:
             color_table.append(ct.split())
-        start_pos = map(int,file_map[3+map_size].split())
-        end_pos = map(int,file_map[3+map_size+1].split())
-        self.starrequire = map(int,file_map[3+map_size+2].split())
+        start_pos = list(map(int,file_map[3+map_size].split()))
+        end_pos = list(map(int,file_map[3+map_size+1].split()))
+        self.starrequire = list(map(int,file_map[3+map_size+2].split()))
         #file_map.close()
-        print self.center ,"C_Center"
+        print(self.center ,"C_Center")
         # Create GameMap
         sizing = min(Window.size)*0.8
-        print self.center ,"CENTER BEFORE CREATE MAP"
+        print(self.center ,"CENTER BEFORE CREATE MAP")
         self.gamemap = GameMap(map_t=[] ,color_t=color_table,si=map_size,size_hint=(None,None),size=(sizing,sizing),center_x=self.center_x,center_y=self.center_y,rows=map_size,cols=map_size,spacing=0)
         self.add_widget(self.gamemap)
         self.gamemap.center_x = self.center_x
         self.gamemap.center_y = self.center_y
-        print self.gamemap.gridpos
+        print(self.gamemap.gridpos)
         #self.gamemap.size_hint=(0.1,0.1)
         #self.gamemap.size=(500,500)
-        print self.gamemap.size,self.gamemap.size_hint,"GAMEMAP SIZE"
-        print self.gamemap.center ,"GAMEMAP CENTER"
+        print(self.gamemap.size,self.gamemap.size_hint,"GAMEMAP SIZE")
+        print(self.gamemap.center, "GAMEMAP CENTER")
         # Create GameBall
         self.gameball = GameBall(size=[50,50],pos=[500,100])
         self.add_widget(self.gameball)
         self.gameball.setFirstStat(start_pos, end_pos,color_table[start_pos[0]][start_pos[1]])
         st_x,st_y = self.gamemap.gridpos[1][1]
         self.gameball.pos = (st_x - self.gameball.size[0]/2.0,st_y-self.gameball.size[1]/2.0) 
-        print self.gameball.pos , "GAMEBALL POS INIT"
+        print(self.gameball.pos, "GAMEBALL POS INIT")
         
         # Create GameControl
         self.gamecontrol = GameControl(color_list=color_list)
@@ -380,10 +387,10 @@ class GameTab(Widget):
         tmps = [True,False]
         for x in self.gamemap.children:
             x.changeColor(x.color)
-            if self.gameball.endgrid == map(int,[x.id[1],x.id[2]]):
+            if self.gameball.endgrid == list(map(int,[x.id[1],x.id[2]])):
                 x.setFlag()
-                print "YYYYYYYYYY"
-                print self.gameball.endgrid
+                print("YYYYYYYYYY")
+                print(self.gameball.endgrid)
             else:
                 x.clear_widgets()
             #x.star = tmps[randint(0,1)]
@@ -414,10 +421,19 @@ class GameTab(Widget):
         super(GameTab,self).__init__(**kwargs)
         self.pos = [0,0]
         self.size = Window.size
-        print self.size,"GAMETAB WINDOW SIZE"
-        print self.center,"GAMETAB CENTER INIT"
+        print(self.size,"GAMETAB WINDOW SIZE")
+        print(self.center,"GAMETAB CENTER INIT")
         self.readStage(1)
         Clock.schedule_interval(self.pt,0.5)
+
+class ControlButton(Button):
+    def __init__(self, **kwargs):
+        super(ControlButton, self).__init__(pos=kwargs['pos'])
+        self.id = kwargs['id']
+        self.size_hint = kwargs['size_hint']
+        self.pos = kwargs['pos']
+        self.background_normal = kwargs['background_normal']
+        self.background_down = kwargs['background_down']
 
 class GameControlCommand(FloatLayout):
     offset = 400
@@ -429,7 +445,7 @@ class GameControlCommand(FloatLayout):
 
     def submitButton(self):
         tmp = GameControlFunction.color
-        for i in xrange(len(GameControlFunction.obj_push)):
+        for i in range(len(GameControlFunction.obj_push)):
             if GameControlFunction.obj_push[i] == 0:
                 self.command_hash[tmp[i]] = ''
             else:
@@ -545,19 +561,19 @@ class GameControlCommand(FloatLayout):
         super(GameControlCommand, self).__init__(**kwargs)
         data = ['U','D','L','R']
         index = 0
-        for x in xrange(5):
-            for y in xrange(5):
+        for x in range(5):
+            for y in range(5):
                 type_button = data[index]
                 index+=1
-                for z in xrange(colorNum+2):
+                for z in range(colorNum+2):
                     if type_button == 'U':
-                        self.add_widget(Button(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,70+x*50]))
+                        self.add_widget(ControlButton(background_normal='images/up.png',background_down='images/up_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,70+x*50]))
                     elif type_button == 'D':
-                        self.add_widget(Button(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,70+x*50]))
+                        self.add_widget(ControlButton(background_normal='images/down.png',background_down='images/down_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,70+x*50]))
                     elif type_button == 'R':
-                        self.add_widget(Button(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,20+x*50]))
+                        self.add_widget(ControlButton(background_normal='images/right.png',background_down='images/right_c.png',id=type_button,size_hint=[.1, .1],pos=[50+3*50,20+x*50]))
                     elif type_button == 'L':
-                        self.add_widget(Button(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,20+x*50]))
+                        self.add_widget(ControlButton(background_normal='images/left.png',background_down='images/left_c.png',id=type_button,size_hint=[.1, .1],pos=[50+4*50,20+x*50]))
                 if index >= len(data):
                         break
             if index >= len(data):
@@ -600,7 +616,7 @@ class GameControlFunction(FloatLayout):
         """
         index = 0
         GameControlFunction.block_pos = []
-        for x in xrange(GameControlFunction.number):
+        for x in range(GameControlFunction.number):
             self.canvas.add(GameColor().getColor(GameControlFunction.color[x]))
             """
             if GameControlFunction.color[x] == 'Red':
@@ -638,6 +654,7 @@ class ReleaseButton(FloatLayout):
 
 class GameScreen(Screen):
     pass
+
 class StartScreen(Screen):
     def toGameScreen(self):
         self.parent.current = 'gs'
